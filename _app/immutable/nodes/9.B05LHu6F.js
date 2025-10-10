@@ -1,0 +1,1 @@
+import"../chunks/DsnmJJEf.js";import"../chunks/DG3cN2Nx.js";import{f as s,a}from"../chunks/CWCW-u92.js";var e=s('<section class="space-y-3"><h1 class="text-2xl font-semibold">개인정보처리방침</h1> <p class="text-[var(--muted)]">개인정보 처리방침은 추후 업데이트될 예정입니다.</p></section>');function m(t){var o=e();a(t,o)}export{m as component};
