@@ -289,7 +289,7 @@ let filteredEvents: CalendarEvent[] = events;
 	.calendar-pane {
 		display: grid;
 		gap: 20px;
-		color: #e5e5e5;
+		color: var(--c-text-primary);
 		max-width: 1200px;
 		margin: 0 auto;
 		padding: 20px;
@@ -300,9 +300,9 @@ let filteredEvents: CalendarEvent[] = events;
 		flex-direction: column;
 		gap: 16px;
 		padding: 24px;
-		border-radius: 12px;
-		border: 1px solid #3b3b3b;
-		background: #282a2c;
+		border-radius: var(--radius-lg);
+		border: 1px solid var(--c-bg-700);
+		background: var(--c-bg-800);
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 	}
 
@@ -310,14 +310,14 @@ let filteredEvents: CalendarEvent[] = events;
 		margin: 0;
 		font-size: 1.5rem;
 		font-weight: 600;
-		color: #ffffff;
+		color: var(--c-text-primary);
 		letter-spacing: -0.01em;
 	}
 
 	.calendar-intro p {
 		margin: 0;
 		font-size: 0.9rem;
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 		line-height: 1.5;
 	}
 
@@ -332,10 +332,10 @@ let filteredEvents: CalendarEvent[] = events;
 		align-items: center;
 		justify-content: center;
 		padding: 8px 16px;
-		border-radius: 6px;
-		border: 1px solid #3b3b3b;
-		background: #222222;
-		color: #d0d0d0;
+		border-radius: var(--radius-sm);
+		border: 1px solid var(--c-bg-700);
+		background: var(--c-bg-900);
+		color: var(--c-text-secondary);
 		cursor: pointer;
 		font-size: 0.8rem;
 		font-weight: 500;
@@ -343,15 +343,15 @@ let filteredEvents: CalendarEvent[] = events;
 	}
 
 	.filter-button:hover {
-		background: #2a2a2a;
-		border-color: #4a4a4a;
-		color: #ffffff;
+		background: var(--c-bg-700);
+		border-color: rgba(255, 255, 255, 0.08);
+		color: var(--c-text-primary);
 	}
 
 	.filter-button.active {
-		background: #3b3b3b;
-		border-color: #5a5a5a;
-		color: #ffffff;
+		background: var(--c-bg-700);
+		border-color: rgba(255, 255, 255, 0.12);
+		color: var(--c-text-primary);
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 	}
 
@@ -359,16 +359,16 @@ let filteredEvents: CalendarEvent[] = events;
 		display: grid;
 		gap: 16px;
 		padding: 20px;
-		border-radius: 12px;
-		border: 1px solid #3b3b3b;
-		background: #282a2c;
+		border-radius: var(--radius-lg);
+		border: 1px solid var(--c-bg-700);
+		background: var(--c-bg-800);
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 	}
 
 	.calendar-container {
-		border-radius: 8px;
-		background: #222222;
-		border: 1px solid #3b3b3b;
+		border-radius: var(--radius-md);
+		background: var(--c-bg-900);
+		border: 1px solid var(--c-bg-700);
 		padding: 12px;
 		overflow: hidden;
 	}
@@ -378,44 +378,44 @@ let filteredEvents: CalendarEvent[] = events;
 	}
 
 	.calendar-container :global(.fc) {
-		--fc-border-color: #3b3b3b;
+		--fc-border-color: var(--c-bg-700);
 		--fc-page-bg-color: transparent;
-		--fc-neutral-bg-color: #2a2a2a;
-		--fc-list-event-hover-bg-color: #3a3a3a;
-		--fc-today-bg-color: #3b3b3b;
-		color: #e5e5e5;
+		--fc-neutral-bg-color: var(--c-bg-900);
+		--fc-list-event-hover-bg-color: var(--c-bg-700);
+		--fc-today-bg-color: var(--c-bg-700);
+		color: var(--c-text-primary);
 		font-family: 'Inter', 'Pretendard', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 	}
 
 	.calendar-container :global(.fc .fc-toolbar-title) {
 		font-size: 1.1rem;
 		font-weight: 600;
-		color: #ffffff;
+		color: var(--c-text-primary);
 	}
 
 	.calendar-container :global(.fc .fc-button) {
-		background: #3b3b3b;
-		border: 1px solid #4a4a4a;
-		color: #e5e5e5;
-		border-radius: 6px;
+		background: var(--c-bg-700);
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		color: var(--c-text-primary);
+		border-radius: var(--radius-sm);
 		padding: 6px 12px;
 		transition: all 0.2s ease;
 	}
 
 	.calendar-container :global(.fc .fc-button:hover),
 	.calendar-container :global(.fc .fc-button:focus-visible) {
-		background: #4a4a4a;
-		color: #ffffff;
-		border-color: #5a5a5a;
+		background: rgba(255, 255, 255, 0.08);
+		color: var(--c-text-primary);
+		border-color: rgba(255, 255, 255, 0.12);
 	}
 
 	.calendar-container :global(.fc .fc-daygrid-day-number) {
-		color: #d0d0d0;
+		color: var(--c-text-secondary);
 		font-weight: 500;
 	}
 
 	.calendar-container :global(.fc .fc-col-header-cell) {
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 		font-weight: 600;
 	}
 
@@ -425,16 +425,16 @@ let filteredEvents: CalendarEvent[] = events;
 		font-size: 0.75rem;
 		border-width: 1px !important;
 		border-style: solid !important;
-		background: #ffffff !important;
-		color: #222222 !important;
+		background: var(--c-text-primary) !important;
+		color: var(--c-bg-900) !important;
 		font-weight: 500;
 	}
 
 	.selected-events,
 	.empty-events {
-		border-radius: 8px;
-		border: 1px solid #3b3b3b;
-		background: #222222;
+		border-radius: var(--radius-md);
+		border: 1px solid var(--c-bg-700);
+		background: var(--c-bg-900);
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 	}
 
@@ -443,14 +443,14 @@ let filteredEvents: CalendarEvent[] = events;
 		align-items: baseline;
 		justify-content: space-between;
 		padding: 16px 20px;
-		border-bottom: 1px solid #3b3b3b;
+		border-bottom: 1px solid var(--c-bg-700);
 		font-size: 0.8rem;
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 	}
 
 	.selected-events header strong {
 		font-size: 0.9rem;
-		color: #ffffff;
+		color: var(--c-text-primary);
 	}
 
 	.selected-events ul {
@@ -472,7 +472,7 @@ let filteredEvents: CalendarEvent[] = events;
 	}
 
 	.selected-events li + li {
-		border-top: 1px solid #3b3b3b;
+		border-top: 1px solid var(--c-bg-700);
 	}
 
 	.event-main {
@@ -498,32 +498,32 @@ let filteredEvents: CalendarEvent[] = events;
 
 	.event-body strong {
 		font-size: 0.85rem;
-		color: #ffffff;
+		color: var(--c-text-primary);
 	}
 
 	.event-body .meta {
 		font-size: 0.75rem;
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 	}
 
 	.selected-events a {
 		font-size: 0.75rem;
-		color: #6a9eff;
+		color: rgba(255, 255, 255, 0.85);
 		text-decoration: none;
 		border-bottom: 1px solid transparent;
 		transition: all 0.2s ease;
 	}
 
 	.selected-events a:hover {
-		color: #8bb3ff;
-		border-color: #8bb3ff;
+		color: rgba(255, 255, 255, 0.9);
+		border-color: rgba(255, 255, 255, 0.9);
 	}
 
 	.empty-events {
 		padding: 24px;
 		text-align: center;
 		font-size: 0.85rem;
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 	}
 
 	@media (max-width: 880px) {

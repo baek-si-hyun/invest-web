@@ -291,11 +291,11 @@ const loadTradingViewScript = () => {
 		left: 0;
 		display: flex;
 		flex-direction: column;
-		background: #282a2c;
-		border-radius: 8px;
-		border: 1px solid #3b3b3b;
+		background: var(--c-bg-800);
+		border-radius: var(--radius-md);
+		border: 1px solid var(--c-bg-700);
 		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-		color: #e5e5e5;
+		color: var(--c-text-primary);
 		overflow: hidden;
 		cursor: default;
 	}
@@ -306,8 +306,8 @@ const loadTradingViewScript = () => {
 		justify-content: space-between;
 		padding: 10px 14px;
 		gap: 12px;
-		background: #222222;
-		border-bottom: 1px solid #3b3b3b;
+		background: var(--c-bg-900);
+		border-bottom: 1px solid var(--c-bg-700);
 		cursor: grab;
 		user-select: none;
 	}
@@ -329,13 +329,13 @@ const loadTradingViewScript = () => {
 
 	.window__info span {
 		font-size: 0.7rem;
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 	}
 
 	.window__close {
 		background: transparent;
 		border: none;
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 		font-size: 0.9rem;
 		width: 24px;
 		height: 24px;
@@ -347,8 +347,8 @@ const loadTradingViewScript = () => {
 	}
 
 	.window__close:hover {
-		background: #3b3b3b;
-		color: #ffffff;
+		background: var(--c-bg-700);
+		color: var(--c-text-primary);
 	}
 
 	.window__body {
@@ -367,8 +367,8 @@ const loadTradingViewScript = () => {
 		inset: 0;
 		display: grid;
 		place-items: center;
-		background: #222222;
-		color: #e5e5e5;
+		background: var(--c-bg-900);
+		color: var(--c-text-primary);
 		font-size: 0.85rem;
 		text-align: center;
 		padding: 0 12px;
@@ -380,7 +380,7 @@ const loadTradingViewScript = () => {
 	}
 
 	.chart-overlay.error {
-		background: #3b3b3b;
+		background: var(--c-bg-700);
 		color: #ff6b6b;
 	}
 

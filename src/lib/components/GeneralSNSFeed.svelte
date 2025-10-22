@@ -217,10 +217,10 @@ const selectPlatform = (platformId: 'all' | PlatformId) => {
 	.sns-feed {
 		display: grid;
 		gap: 28px;
-		color: #e5e5e5;
-		background: #282a2c;
-		border: 1px solid #3b3b3b;
-		border-radius: 12px;
+		color: var(--c-text-primary);
+		background: var(--c-bg-800);
+		border: 1px solid var(--c-bg-700);
+		border-radius: var(--radius-lg);
 		padding: 36px;
 		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 	}
@@ -240,7 +240,7 @@ const selectPlatform = (platformId: 'all' | PlatformId) => {
 
 	.feed-copy p {
 		margin: 8px 0 0;
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 		font-size: 0.98rem;
 	}
 
@@ -256,28 +256,28 @@ const selectPlatform = (platformId: 'all' | PlatformId) => {
 		padding: 6px 12px;
 		border-radius: 4px;
 		font-size: 0.78rem;
-		background: #3b3b3b;
-		color: #ffffff;
+		background: var(--c-bg-700);
+		color: var(--c-text-primary);
 	}
 
 	.meta-chip--notice {
-		background: #5a5a5a;
+		background: rgba(255, 255, 255, 0.12);
 	}
 
 	.platform-tabs {
 		display: inline-flex;
 		gap: 10px;
-		background: #222222;
+		background: var(--c-bg-900);
 		padding: 6px;
-		border-radius: 6px;
-		border: 1px solid #3b3b3b;
+		border-radius: var(--radius-sm);
+		border: 1px solid var(--c-bg-700);
 		width: fit-content;
 	}
 
 	.platform-tabs button {
 		border: none;
 		background: transparent;
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 		padding: 7px 16px;
 		border-radius: 4px;
 		cursor: pointer;
@@ -286,19 +286,19 @@ const selectPlatform = (platformId: 'all' | PlatformId) => {
 	}
 
 	.platform-tabs button:hover {
-		color: #ffffff;
-		background: #3b3b3b;
+		color: var(--c-text-primary);
+		background: var(--c-bg-700);
 	}
 
 	.platform-tabs button.active {
-		background: #3b3b3b;
-		color: #ffffff;
+		background: var(--c-bg-700);
+		color: var(--c-text-primary);
 	}
 
 	.feed-disclaimer {
 		margin: 0;
 		font-size: 0.85rem;
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 		line-height: 1.5;
 	}
 
@@ -320,9 +320,9 @@ const selectPlatform = (platformId: 'all' | PlatformId) => {
 		display: grid;
 		grid-template-rows: auto 1fr;
 		gap: 14px;
-		background: #222222;
-		border: 1px solid #3b3b3b;
-		border-radius: 8px;
+		background: var(--c-bg-900);
+		border: 1px solid var(--c-bg-700);
+		border-radius: var(--radius-md);
 		padding: 20px 18px;
 		min-height: 0;
 		max-height: clamp(320px, 60vh, 520px);
@@ -332,7 +332,7 @@ const selectPlatform = (platformId: 'all' | PlatformId) => {
 	.hot-sidebar h2 {
 		margin: 0;
 		font-size: 0.96rem;
-		color: #ffffff;
+		color: var(--c-text-primary);
 		letter-spacing: 0.01em;
 	}
 
@@ -370,8 +370,8 @@ const selectPlatform = (platformId: 'all' | PlatformId) => {
 		align-items: center;
 		width: 100%;
 		border: none;
-		background: #3b3b3b;
-		border-radius: 6px;
+		background: var(--c-bg-700);
+		border-radius: var(--radius-sm);
 		padding: 8px 10px;
 		gap: 10px;
 		color: inherit;
@@ -382,12 +382,12 @@ const selectPlatform = (platformId: 'all' | PlatformId) => {
 
 	.hot-sidebar button:hover {
 		transform: translateY(-1px);
-		background: #5a5a5a;
+		background: rgba(255, 255, 255, 0.12);
 	}
 
 	.hot-sidebar button.selected {
-		background: #5a5a5a;
-		border: 1px solid #7a7a7a;
+		background: rgba(255, 255, 255, 0.12);
+		border: 1px solid rgba(255, 255, 255, 0.16);
 	}
 
 	.platform-dot {
@@ -415,12 +415,12 @@ const selectPlatform = (platformId: 'all' | PlatformId) => {
 
 	.figure-meta strong {
 		font-size: 0.88rem;
-		color: #ffffff;
+		color: var(--c-text-primary);
 	}
 
 	.figure-meta span {
 		font-size: 0.72rem;
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 	}
 
 	.feed-content {
@@ -464,9 +464,9 @@ const selectPlatform = (platformId: 'all' | PlatformId) => {
 		display: grid;
 		gap: 14px;
 		padding: 24px;
-		border-radius: 8px;
-		background: #222222;
-		border: 1px solid #3b3b3b;
+		border-radius: var(--radius-md);
+		background: var(--c-bg-900);
+		border: 1px solid var(--c-bg-700);
 		position: relative;
 	}
 
@@ -501,28 +501,28 @@ const selectPlatform = (platformId: 'all' | PlatformId) => {
 	.card-profile strong {
 		display: block;
 		font-size: 1rem;
-		color: #ffffff;
+		color: var(--c-text-primary);
 	}
 
 	.card-profile .handle {
 		font-size: 0.8rem;
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 	}
 
 	.platform-label {
 		margin-left: auto;
 		font-size: 0.76rem;
-		color: #ffffff;
+		color: var(--c-text-primary);
 		padding: 4px 10px;
 		border-radius: 4px;
-		background: #3b3b3b;
+		background: var(--c-bg-700);
 	}
 
 	.card-content {
 		margin: 0;
 		font-size: 0.95rem;
 		line-height: 1.6;
-		color: #e5e5e5;
+		color: var(--c-text-primary);
 	}
 
 	.card-footer {
@@ -535,11 +535,11 @@ const selectPlatform = (platformId: 'all' | PlatformId) => {
 		gap: 12px;
 		align-items: center;
 		font-size: 0.78rem;
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 	}
 
 	.card-meta a {
-		color: #6a9eff;
+		color: rgba(255, 255, 255, 0.85);
 		text-decoration: none;
 		font-weight: 600;
 	}
@@ -555,30 +555,30 @@ const selectPlatform = (platformId: 'all' | PlatformId) => {
 		margin: 0;
 		padding: 0;
 		font-size: 0.8rem;
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 	}
 
 	.card-detail {
 		margin: 0;
 		font-size: 0.85rem;
 		line-height: 1.55;
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 	}
 
 	.empty {
 		grid-column: 1 / -1;
 		padding: 48px;
-		border-radius: 8px;
-		background: #222222;
-		border: 1px dashed #3b3b3b;
+		border-radius: var(--radius-md);
+		background: var(--c-bg-900);
+		border: 1px dashed var(--c-bg-700);
 		text-align: center;
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 	}
 
 	@media (max-width: 640px) {
 		.sns-feed {
 			padding: 28px 20px;
-			border-radius: 22px;
+			border-radius: var(--radius-lg);
 		}
 
 		.feed-body {

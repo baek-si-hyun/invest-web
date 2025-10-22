@@ -17,10 +17,10 @@
 		display: grid;
 		gap: 12px;
 		padding: 52px;
-		border-radius: 12px;
-		border: 1px solid #3b3b3b;
-		background: #282a2c;
-		color: #e5e5e5;
+		border-radius: var(--radius-lg);
+		border: 1px solid var(--c-bg-700);
+		background: var(--c-bg-800);
+		color: var(--c-text-primary);
 		text-align: center;
 		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 		max-width: 1240px;
@@ -37,7 +37,7 @@
 	.placeholder p {
 		margin: 0;
 		font-size: 0.94rem;
-		color: #b0b0b0;
+		color: var(--c-text-muted);
 		line-height: 1.6;
 	}
 </style>
