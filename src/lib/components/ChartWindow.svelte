@@ -291,12 +291,11 @@ const loadTradingViewScript = () => {
 		left: 0;
 		display: flex;
 		flex-direction: column;
-		background: rgba(6, 10, 24, 0.92);
-		backdrop-filter: blur(14px);
-		border-radius: 14px;
-		border: 1px solid rgba(120, 144, 156, 0.35);
-		box-shadow: 0 14px 45px rgba(5, 9, 20, 0.4);
-		color: #e1ebf5;
+		background: #282a2c;
+		border-radius: 8px;
+		border: 1px solid #3b3b3b;
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+		color: #e5e5e5;
 		overflow: hidden;
 		cursor: default;
 	}
@@ -307,8 +306,8 @@ const loadTradingViewScript = () => {
 		justify-content: space-between;
 		padding: 10px 14px;
 		gap: 12px;
-		background: rgba(13, 20, 42, 0.95);
-		border-bottom: 1px solid rgba(33, 48, 74, 0.8);
+		background: #222222;
+		border-bottom: 1px solid #3b3b3b;
 		cursor: grab;
 		user-select: none;
 	}
@@ -330,26 +329,26 @@ const loadTradingViewScript = () => {
 
 	.window__info span {
 		font-size: 0.7rem;
-		color: rgba(209, 227, 255, 0.6);
+		color: #b0b0b0;
 	}
 
 	.window__close {
 		background: transparent;
 		border: none;
-		color: rgba(219, 236, 255, 0.65);
+		color: #b0b0b0;
 		font-size: 0.9rem;
 		width: 24px;
 		height: 24px;
-		border-radius: 6px;
+		border-radius: 4px;
 		display: grid;
 		place-items: center;
 		cursor: pointer;
-		transition: background 0.15s ease, color 0.15s ease;
+		transition: all 0.2s ease;
 	}
 
 	.window__close:hover {
-		background: rgba(255, 107, 129, 0.18);
-		color: #ff6b81;
+		background: #3b3b3b;
+		color: #ffffff;
 	}
 
 	.window__body {
@@ -368,8 +367,8 @@ const loadTradingViewScript = () => {
 		inset: 0;
 		display: grid;
 		place-items: center;
-		background: rgba(6, 12, 28, 0.78);
-		color: rgba(217, 227, 247, 0.85);
+		background: #222222;
+		color: #e5e5e5;
 		font-size: 0.85rem;
 		text-align: center;
 		padding: 0 12px;
@@ -381,8 +380,8 @@ const loadTradingViewScript = () => {
 	}
 
 	.chart-overlay.error {
-		background: rgba(38, 12, 24, 0.8);
-		color: #fca5a5;
+		background: #3b3b3b;
+		color: #ff6b6b;
 	}
 
 	.window__resize-handle {

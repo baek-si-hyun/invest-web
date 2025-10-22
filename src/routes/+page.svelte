@@ -1,7 +1,14 @@
 <script lang="ts">
 	import ChartWindow from '$lib/components/ChartWindow.svelte';
+	import EconomicCalendar from '$lib/components/EconomicCalendar.svelte';
+	import GeneralDashboard from '$lib/components/GeneralDashboard.svelte';
+	import GeneralSNSFeed from '$lib/components/GeneralSNSFeed.svelte';
+	import GeneralNewsFeed from '$lib/components/GeneralNewsFeed.svelte';
+	import GeneralPlaceholder from '$lib/components/GeneralPlaceholder.svelte';
 	import InfoWindow from '$lib/components/InfoWindow.svelte';
 	import { instruments } from '$lib/data/instruments';
+	import { socialPlatforms as snsPlatforms, type SocialPlatform } from '$lib/data/social';
+	import { newsSources, type NewsSource } from '$lib/data/news';
 
 	type Section = 'chart' | 'events' | 'sns' | 'news' | 'community';
 	type Mode = 'general' | 'pro';
@@ -64,234 +71,9 @@ const economicEvents: EconomicEvent[] = [
 	}
 ];
 
-type SNSPlatform = {
-	id: string;
-	label: string;
-	description: string;
-	posts: Array<{
-		nickname: string;
-		handle: string;
-		avatar: string;
-		content: string;
-		timeAgo: string;
-		detail: string;
-	}>;
-};
-
-	const snsPlatforms: SNSPlatform[] = [
-		{
-			id: 'x',
-			label: 'X (Twitter)',
-			description: '실시간 글로벌 트레이더 이슈를 확인해요.',
-			posts: [
-				{
-					nickname: 'Macro Watch',
-					handle: '@macro_watch',
-					avatar: 'https://ui-avatars.com/api/?name=MW&background=1d4ed8&color=fff',
-					content: '美 국채금리 하락에 기술주 선물 상승. CPI 발표 앞두고 변동성 주의!',
-					timeAgo: '5분 전',
-					detail:
-						'10년물 국채금리가 4% 초반대로 내려오면서 나스닥 선물이 동반 상승 중입니다. 아직 CPI 발표가 남아 있어 포지션은 가볍게 유지하는 것이 좋겠습니다.'
-				},
-				{
-					nickname: 'Chain Alpha',
-					handle: '@chainalpha',
-					avatar: 'https://ui-avatars.com/api/?name=CA&background=0f172a&color=fff',
-					content: '비트코인 ETF 5거래일 연속 순유입. 내일 FOMC 의사록이 방향성 결정할 듯.',
-					timeAgo: '14분 전',
-					detail:
-						'현물 ETF 자금 흐름이 강하게 들어오고 있습니다. 다만 연준 의사록에서 매파적 메시지가 나오면 단기 조정이 나올 수 있어 분할 매수 전략을 추천합니다.'
-				},
-				{
-					nickname: 'Asia Markets',
-					handle: '@asia_markets',
-					avatar: 'https://ui-avatars.com/api/?name=AM&background=4c1d95&color=fff',
-					content: '닛케이 지수 사상 최고치 근접. 엔화 약세 지속.',
-					timeAgo: '27분 전',
-					detail:
-						'엔화 추가 약세와 실적 기대감이 맞물리며 닛케이 지수가 30년 만에 최고치를 재차 노립니다. 일본 은행주의 배당 확대도 동반 호재입니다.'
-				}
-			]
-		},
-		{
-			id: 'facebook',
-			label: '페이스북',
-			description: '국내외 투자 커뮤니티 요약을 모았어요.',
-			posts: [
-				{
-					nickname: 'K-Value 투자모임',
-					handle: 'facebook.com/kvalue',
-					avatar: 'https://ui-avatars.com/api/?name=KV&background=14532d&color=fff',
-					content: '삼성전자 배당 확대 가능성으로 장 초반 강세. 반도체 업황 개선 기대감 상승.',
-					timeAgo: '12분 전',
-					detail:
-						'배당 확대설과 DDR5 수요 회복 기대가 동시에 반영되며 외국인 매수세가 유입 중입니다. 목표 주가 상향 리포트도 속속 나오고 있습니다.'
-				},
-				{
-					nickname: '글로벌 ETF 연구소',
-					handle: 'facebook.com/etfresearch',
-					avatar: 'https://ui-avatars.com/api/?name=ETF&background=0f766e&color=fff',
-					content: '인공지능(AI) 테마 ETF 자금 유입이 다시 증가하고 있습니다.',
-					timeAgo: '24분 전',
-					detail:
-						'최근 2주 연속 순유입이 나타나고 있습니다. 특히 미국 상장 SOXX·SMH ETF의 거래대금이 크게 늘었으며, 관련 장비주에도 확산되는 분위기입니다.'
-				},
-				{
-					nickname: '미국주식 토론방',
-					handle: 'facebook.com/usstocktalk',
-					avatar: 'https://ui-avatars.com/api/?name=US&background=9d174d&color=fff',
-					content: '테슬라 주가 급락, 다음 주 실적 발표 앞두고 변동성 커질 전망.',
-					timeAgo: '38분 전',
-					detail:
-						'가격 인하 압박과 공급망 리스크가 재차 부각되며 변동성이 확대됐습니다. 실적 발표 전후로 옵션 변동성 매매에 유리한 구간이 열릴 수 있습니다.'
-				}
-			]
-		}
-];
-
 const snsPlatformMap = new Map(snsPlatforms.map((platform) => [platform.id, platform] as const));
-
-type NewsSource = {
-	id: string;
-	label: string;
-	region: string;
-	headlines: Array<{ title: string; timeAgo: string; summary: string; body: string }>;
-};
-
-const newsSources: NewsSource[] = [
-		{
-			id: 'reuters',
-			label: '로이터',
-			region: '글로벌',
-			headlines: [
-				{
-					title: 'FOMC 의사록 공개 앞두고 미 증시 혼조세',
-					timeAgo: '7분 전',
-					summary: '연준의 긴축 경로를 주시하는 투자자들로 인해 뉴욕증시가 혼조세를 보이고 있습니다.',
-					body: '시장은 연준이 얼마나 오래 높은 금리를 유지할지를 가늠하려 하고 있습니다. 기술주와 에너지주는 각각 금리 전망과 유가 상승에 따라 엇갈린 흐름을 보였습니다.'
-				},
-				{
-					title: '중국, 경기 부양 위해 추가 금리 인하 시사',
-					timeAgo: '21분 전',
-					summary: '중국 정부가 성장 둔화 대응 차원에서 추가 금리 인하 가능성을 언급했습니다.',
-					body: '부동산 침체와 내수 부진이 장기화되면서 추가 부양책이 필요하다는 목소리가 커지고 있습니다. 위안화 약세와 글로벌 상품 수요 변화에도 영향을 미칠 전망입니다.'
-				},
-				{
-					title: '유가, 공급 우려에 1% 상승 마감',
-					timeAgo: '35분 전',
-					summary: '중동 지역 공급 차질 우려가 지속되며 국제유가가 상승 마감했습니다.',
-					body: 'WTI 선물은 배럴당 1% 이상 상승했고, OPEC+의 감산 준수 여부에 시장 관심이 쏠려 있습니다. 에너지 관련 주식과 인플레이션 기대치에도 영향을 줄 수 있습니다.'
-				}
-			]
-		},
-		{
-			id: 'bloomberg',
-			label: '블룸버그',
-			region: '미국',
-			headlines: [
-				{
-					title: 'AI 투자붐, 반도체 업종 실적 기대치 상향',
-					timeAgo: '10분 전',
-					summary: 'AI 데이터센터 투자가 확대되며 반도체 기업들의 실적 전망치가 상향되고 있습니다.',
-					body: 'NVIDIA, AMD 등 주요 기업의 매출 가이던스가 상향 조정되면서 관련 공급망 전반이 수혜를 받고 있습니다. 장비 업체와 소재 업체까지 긍정적 파급이 예상됩니다.'
-				},
-				{
-					title: '달러 강세 지속, 신흥국 통화 약세 압박',
-					timeAgo: '32분 전',
-					summary: '연준의 매파적 기조와 높은 금리가 달러 강세를 유지하게 만들고 있습니다.',
-					body: '신흥국 통화는 자본 유출 압력을 받고 있으며, 일부 국가는 외환 방어선을 복원하기 위한 정책을 검토 중입니다.'
-				},
-				{
-					title: '월가, 연말 S&P 500 목표가 상향 조정',
-					timeAgo: '48분 전',
-					summary: '주요 IB들이 미국 증시의 연말 목표치를 상향 조정했습니다.',
-					body: '기업 실적이 예상을 웃돌고 경기 연착륙 시나리오가 힘을 받으면서, 투자심리가 개선됐다는 분석입니다. 다만 성장주와 가치주의 온도 차는 여전하다는 지적도 나옵니다.'
-				}
-			]
-		},
-		{
-			id: 'bbc',
-			label: 'BBC',
-			region: '영국',
-			headlines: [
-				{
-					title: '영란은행, 인플레이션 경로 재점검 착수',
-					timeAgo: '15분 전',
-					summary: '영란은행이 물가 경로를 재점검하며 향후 금리 인하 가능성을 열어두고 있습니다.',
-					body: '임금 상승률 둔화에도 서비스 물가가 높은 수준을 유지하고 있어, 완만한 금리 인하가 논의될 전망입니다.'
-				},
-				{
-					title: '유럽 제조업 경기 침체 우려 재부상',
-					timeAgo: '36분 전',
-					summary: '유럽 제조업 PMI가 50 이하에서 머물며 경기 침체 우려가 재부각됐습니다.',
-					body: '독일과 프랑스의 생산 지표가 예상에 못 미쳤고, 고금리 환경과 수요 부진이 동반되면서 회복이 지연되고 있습니다.'
-				}
-			]
-		},
-		{
-			id: 'joongang',
-			label: '중앙일보',
-			region: '한국',
-			headlines: [
-				{
-					title: '한국은행, 기준금리 동결…성장률 전망 유지',
-					timeAgo: '9분 전',
-					summary: '한은이 기준금리를 동결하면서 성장률 전망을 유지했습니다.',
-					body: '물가 둔화와 경기 둔화가 동시에 나타나는 가운데, 추가 금리 인상 가능성은 낮다는 평가가 나옵니다. 시장은 연말 인하 가능성에 관심을 기울이고 있습니다.'
-				},
-				{
-					title: '코스피, 외국인 순매수에 장중 2,700선 회복',
-					timeAgo: '28분 전',
-					summary: '외국인 매수세 덕분에 코스피가 장중 2,700선을 회복했습니다.',
-					body: '반도체와 2차전지 업종이 강세를 보였으며, 원화 강세 흐름도 투자심리를 지지했습니다.'
-				},
-				{
-					title: '정부, 반도체 투자 세액공제 확대 검토',
-					timeAgo: '41분 전',
-					summary: '정부가 반도체 산업 투자 세액공제를 확대하는 방안을 검토 중입니다.',
-					body: '글로벌 경쟁 심화에 대응하기 위해 대규모 투자를 지원할 필요가 있다는 판단이며, 세부 시행계획은 다음 달 발표될 예정입니다.'
-				}
-			]
-		},
-		{
-			id: 'nikkei',
-			label: '닛케이',
-			region: '일본',
-			headlines: [
-				{
-					title: '일본 증시, 엔화 약세에 34년 만의 최고치',
-					timeAgo: '18분 전',
-					summary: '엔화 약세가 지속되며 일본 증시가 30년 넘게 유지되던 박스를 돌파했습니다.',
-					body: '수출기업 실적 개선 기대감과 함께 일본 은행주, 자동차주 등이 강세를 보이고 있습니다.'
-				},
-				{
-					title: '도요타, 전기차 생산 확대 계획 발표',
-					timeAgo: '44분 전',
-					summary: '도요타가 전기차 생산 목표를 상향 조정했습니다.',
-					body: '배터리 효율 개선과 생산 공정 자동화를 통해 2030년까지 전기차 판매 비중을 40%까지 끌어올린다는 계획입니다.'
-				}
-			]
-		},
-		{
-			id: 'cnbc',
-			label: 'CNBC',
-			region: '미국',
-			headlines: [
-				{
-					title: '테크 기업들, AI 인력 채용 경쟁 가열',
-					timeAgo: '6분 전',
-					summary: 'AI 기술력 확보를 위한 인재 확보 경쟁이 심화되고 있습니다.',
-					body: '구글, 마이크로소프트 등 대형 테크 기업이 경쟁적으로 연봉을 상향 조정하며 핵심 인재 확보에 나섰습니다.'
-				},
-				{
-					title: '국제유가 상승에 항공주 약세',
-					timeAgo: '25분 전',
-					summary: '유가 상승이 항공 업계 비용 부담으로 이어지며 항공주가 약세를 보였습니다.',
-					body: '특히 장거리 노선을 보유한 항공사부터 연료비 부담이 반영되었으며, 향후 운임 인상 여부가 관건입니다.'
-				}
-			]
-		}
-];
+type PlatformId = SocialPlatform['id'];
+const allPlatformIds: PlatformId[] = snsPlatforms.map((platform) => platform.id);
 
 	const newsSourceMap = new Map(newsSources.map((source) => [source.id, source] as const));
 
@@ -304,8 +86,18 @@ type WindowBase = {
 
 type ChartWindowState = WindowBase & { type: 'chart'; instrumentId: string };
 type EventsWindowState = WindowBase & { type: 'events'; view: 'list' | 'detail'; selectedIndex: number | null };
-type SNSWindowState = WindowBase & { type: 'sns'; platform: string; view: 'list' | 'detail'; selectedIndex: number | null };
-type NewsWindowState = WindowBase & { type: 'news'; source: string; view: 'list' | 'detail'; selectedIndex: number | null };
+type SNSWindowState = WindowBase & {
+	type: 'sns';
+	platforms: PlatformId[];
+	view: 'list' | 'detail';
+	selectedIndex: number | null;
+};
+type NewsWindowState = WindowBase & {
+	type: 'news';
+	sources: string[];
+	view: 'list' | 'detail';
+	selectedIndex: number | null;
+};
 
 type WindowState = ChartWindowState | EventsWindowState | SNSWindowState | NewsWindowState;
 
@@ -313,12 +105,21 @@ let mode: Mode = 'pro';
 	let hoveredSection: Section | null = null;
 	let hoverTimer: ReturnType<typeof setTimeout> | null = null;
 	let activeSection: Section | null = 'chart';
+	let generalSection: Section = 'chart';
 	let navHeight = 72;
 	let zCounter = 5;
 	let windows: WindowState[] = [];
 
 	const setMode = (nextMode: Mode) => {
+		if (mode === nextMode) return;
 		mode = nextMode;
+		cancelHoverHide();
+		hoveredSection = null;
+		if (nextMode === 'general') {
+			generalSection = generalSection ?? 'chart';
+		} else {
+			activeSection = activeSection ?? 'chart';
+		}
 	};
 
 	const cancelHoverHide = () => {
@@ -336,12 +137,30 @@ let mode: Mode = 'pro';
 	};
 
 	const showMenuModal = (section: Section) => {
+		if (mode !== 'pro') return;
 		cancelHoverHide();
 		hoveredSection = section;
 		activeSection = section;
 	};
 
 	const handleMenuClick = (section: Section) => {
+		if (mode !== 'pro') return;
+		showMenuModal(section);
+	};
+
+	const handleNavClick = (section: Section) => {
+		if (mode === 'pro') {
+			handleMenuClick(section);
+			return;
+		}
+
+		generalSection = section;
+		cancelHoverHide();
+		hoveredSection = null;
+	};
+
+	const handleNavPointerEnter = (section: Section) => {
+		if (mode !== 'pro') return;
 		showMenuModal(section);
 	};
 
@@ -420,62 +239,132 @@ const handleMove = (key: string, detail: { x: number; y: number }) => {
 	windows = [...windows, nextWindow];
 };
 
-	const openSNSWindow = (platformId: string) => {
-		if (!snsPlatformMap.has(platformId)) return;
-		const key = `sns:${platformId}`;
-		const existing = windows.find((window) => window.key === key);
-		if (existing) {
-			bringToFront(key);
-			return;
-		}
+const openSNSWindow = (platformId: PlatformId | 'all') => {
+	if (platformId !== 'all' && !snsPlatformMap.has(platformId)) return;
+	const key = 'sns';
+	const existing = windows.find((window) => window.key === key && window.type === 'sns') as
+		| SNSWindowState
+		| undefined;
 
+	if (!existing) {
 		const position = createWindowPosition();
-	const nextWindow: SNSWindowState = {
-		key,
-		type: 'sns',
-		platform: platformId,
-		position,
-		size: { width: 360, height: 340 },
-		z: ++zCounter,
-		view: 'list',
-		selectedIndex: null
-	};
+		const selectedPlatforms: PlatformId[] =
+			platformId === 'all' ? [...allPlatformIds] : [platformId];
+		const nextWindow: SNSWindowState = {
+			key,
+			type: 'sns',
+			platforms: selectedPlatforms,
+			position,
+			size: { width: 360, height: 340 },
+			z: ++zCounter,
+			view: 'list',
+			selectedIndex: null
+		};
 
-	windows = [...windows, nextWindow];
+		windows = [...windows, nextWindow];
+		return;
+	}
+
+	let nextPlatforms: PlatformId[];
+
+	if (platformId === 'all') {
+		nextPlatforms = [...allPlatformIds];
+	} else {
+		const hasPlatform = existing.platforms.includes(platformId);
+		if (hasPlatform) {
+			nextPlatforms = existing.platforms.filter((id) => id !== platformId);
+		} else {
+			nextPlatforms = [...existing.platforms, platformId];
+		}
+	}
+
+	const uniquePlatforms = allPlatformIds.filter((id) => nextPlatforms.includes(id));
+
+	if (uniquePlatforms.length === 0) {
+		windows = windows.filter((window) => window.key !== key);
+		return;
+	}
+
+	updateWindowState(key, (window) => {
+		if (window.type !== 'sns') return window;
+		return { ...window, platforms: uniquePlatforms, view: 'list', selectedIndex: null };
+	});
+	bringToFront(key);
 };
 
 	const openNewsWindow = (sourceId: string) => {
-		if (!newsSourceMap.has(sourceId)) return;
-		const key = `news:${sourceId}`;
-		const existing = windows.find((window) => window.key === key);
-		if (existing) {
-			bringToFront(key);
+		if (sourceId !== 'all' && !newsSourceMap.has(sourceId)) return;
+		const key = 'news';
+		const allIds = newsSources.map((source) => source.id);
+		const existing = windows.find((window) => window.key === key && window.type === 'news') as
+			| NewsWindowState
+			| undefined;
+
+		if (!existing) {
+			const position = createWindowPosition();
+			const selectedSources = sourceId === 'all' ? allIds : [sourceId];
+		const nextWindow: NewsWindowState = {
+			key,
+			type: 'news',
+			sources: selectedSources,
+			position,
+			size: { width: 420, height: 360 },
+			z: ++zCounter,
+			view: 'list',
+			selectedIndex: null
+		};
+
+		windows = [...windows, nextWindow];
 			return;
 		}
 
-		const position = createWindowPosition();
-	const nextWindow: NewsWindowState = {
-		key,
-		type: 'news',
-		source: sourceId,
-		position,
-		size: { width: 420, height: 360 },
-		z: ++zCounter,
-		view: 'list',
-		selectedIndex: null
-	};
+		let nextSources: string[];
 
-	windows = [...windows, nextWindow];
-};
+		if (sourceId === 'all') {
+			nextSources = allIds;
+		} else {
+			const hasSource = existing.sources.includes(sourceId);
+			if (hasSource) {
+				nextSources = existing.sources.filter((id) => id !== sourceId);
+			} else {
+				nextSources = [...existing.sources, sourceId];
+			}
+		}
+
+		const uniqueSources = allIds.filter((id) => nextSources.includes(id));
+
+		if (uniqueSources.length === 0) {
+			windows = windows.filter((window) => window.key !== key);
+			return;
+		}
+
+		updateWindowState(key, (window) => {
+			if (window.type !== 'news') return window;
+			return { ...window, sources: uniqueSources, view: 'list', selectedIndex: null };
+		});
+		bringToFront(key);
+	};
 
 	const isInstrumentActive = (instrumentId: string) =>
 		windows.some((window) => window.type === 'chart' && window.instrumentId === instrumentId);
 
 	const isEventsActive = () => windows.some((window) => window.type === 'events');
-	const isSNSActive = (platformId: string) =>
-		windows.some((window) => window.type === 'sns' && window.platform === platformId);
-	const isNewsActive = (sourceId: string) =>
-		windows.some((window) => window.type === 'news' && window.source === sourceId);
+	const isSNSActive = (platformId: PlatformId | 'all') => {
+		const window = windows.find((entry) => entry.type === 'sns') as SNSWindowState | undefined;
+		if (!window) return false;
+		if (platformId === 'all') {
+			return window.platforms.length === snsPlatforms.length;
+		}
+		return window.platforms.includes(platformId);
+	};
+	const isNewsActive = (sourceId: string) => {
+		const window = windows.find((entry) => entry.type === 'news') as NewsWindowState | undefined;
+		if (!window) return false;
+		if (sourceId === 'all') {
+			return window.sources.length === newsSources.length;
+		}
+		return window.sources.includes(sourceId);
+	};
 
 	const selectInstrument = (instrumentId: string) => {
 		openChart(instrumentId);
@@ -487,14 +376,61 @@ const handleMove = (key: string, detail: { x: number; y: number }) => {
 		hoveredSection = null;
 	};
 
-	const openSNSFromMenu = (platformId: string) => {
+	const openSNSFromMenu = (platformId: PlatformId | 'all') => {
 		openSNSWindow(platformId);
-		hoveredSection = null;
+		if (mode === 'pro') {
+			hoveredSection = null;
+		}
 	};
 
 const openNewsFromMenu = (sourceId: string) => {
 	openNewsWindow(sourceId);
-	hoveredSection = null;
+	if (mode === 'pro') {
+		hoveredSection = null;
+	}
+};
+
+type SNSListItem = SocialPlatform['posts'][number] & {
+	platformId: PlatformId;
+	platformLabel: string;
+};
+
+const getSNSItems = (platformIds: PlatformId[]) => {
+	const selected = platformIds.length
+		? new Set(platformIds)
+		: new Set(allPlatformIds);
+	const items: SNSListItem[] = [];
+	for (const platform of snsPlatforms) {
+		if (!selected.has(platform.id)) continue;
+		for (const post of platform.posts) {
+			items.push({ ...post, platformId: platform.id, platformLabel: platform.label });
+		}
+	}
+	return items;
+};
+
+type NewsListItem = NewsSource['headlines'][number] & {
+	sourceId: string;
+	sourceLabel: string;
+	region: string;
+};
+
+const getNewsItems = (sourceIds: string[]) => {
+	const selected = sourceIds.length ? new Set(sourceIds) : new Set(newsSources.map((source) => source.id));
+	const items: NewsListItem[] = [];
+	for (const source of newsSources) {
+		if (!selected.has(source.id)) continue;
+		for (const headline of source.headlines) {
+			items.push({
+				...headline,
+				sourceId: source.id,
+				sourceLabel: source.label,
+				region: source.region
+			});
+		}
+	}
+
+	return items;
 };
 
 const openEventDetail = (key: string, index: number) => {
@@ -553,11 +489,11 @@ const closeNewsDetail = (key: string) => {
 					<button
 						role="tab"
 						type="button"
-						class:active={activeSection === section.id}
-						on:click={() => handleMenuClick(section.id)}
-						on:pointerenter={() => showMenuModal(section.id)}
-						on:focus={() => showMenuModal(section.id)}
-						aria-selected={activeSection === section.id}
+						class:active={mode === 'pro' ? activeSection === section.id : generalSection === section.id}
+						on:click={() => handleNavClick(section.id)}
+						on:pointerenter={() => handleNavPointerEnter(section.id)}
+						on:focus={() => handleNavPointerEnter(section.id)}
+						aria-selected={mode === 'pro' ? activeSection === section.id : generalSection === section.id}
 					>
 						{section.label}
 					</button>
@@ -583,7 +519,7 @@ const closeNewsDetail = (key: string) => {
 		</div>
 	</nav>
 
-	{#if hoveredSection}
+	{#if mode === 'pro' && hoveredSection}
 		<div class="menu-modal" style={`top: ${navHeight + 12}px;`}>
 			<section class="menu-modal__panel" on:pointerenter={cancelHoverHide} on:pointerleave={scheduleHoverHide}>
 				{#if hoveredSection === 'chart'}
@@ -646,6 +582,15 @@ const closeNewsDetail = (key: string) => {
 							</button>
 						{/each}
 					</div>
+					<button
+						type="button"
+						class="modal-action"
+						class:disabled={isSNSActive('all')}
+						on:click={() => openSNSFromMenu('all')}
+						disabled={isSNSActive('all')}
+					>
+						{isSNSActive('all') ? 'SNS 창이 열려 있습니다' : '모든 플랫폼 함께 보기'}
+					</button>
 				{:else if hoveredSection === 'news'}
 					<header class="menu-modal__header">
 						<h3>뉴스</h3>
@@ -664,6 +609,15 @@ const closeNewsDetail = (key: string) => {
 							</button>
 						{/each}
 					</div>
+					<button
+						type="button"
+						class="modal-action"
+						class:disabled={isNewsActive('all')}
+						on:click={() => openNewsFromMenu('all')}
+						disabled={isNewsActive('all')}
+					>
+						{isNewsActive('all') ? '뉴스 창이 열려 있습니다' : '모든 뉴스 함께 보기'}
+					</button>
 				{:else}
 					<header class="menu-modal__header">
 						<h3>커뮤니티</h3>
@@ -677,7 +631,25 @@ const closeNewsDetail = (key: string) => {
 		</div>
 	{/if}
 
-	<main class="workspace" style={`padding-top: ${navHeight}px;`}>
+	{#if mode === 'general'}
+		<main class="general-container" style={`padding-top: ${navHeight + 32}px;`}>
+			{#if generalSection === 'chart'}
+				<GeneralDashboard />
+			{:else if generalSection === 'events'}
+				<EconomicCalendar />
+			{:else if generalSection === 'sns'}
+				<GeneralSNSFeed />
+			{:else if generalSection === 'news'}
+				<GeneralNewsFeed />
+			{:else}
+				<GeneralPlaceholder
+					title="커뮤니티 라운지"
+					description="커뮤니티 기능은 일반 모드에 맞춰 업데이트될 예정입니다."
+				/>
+			{/if}
+		</main>
+	{:else}
+		<main class="workspace" style={`padding-top: ${navHeight}px;`}>
 		<section class="chart-stage" style={`--nav-offset: ${navHeight}px;`}>
 			<div class="chart-grid"></div>
 			{#if windows.length === 0}
@@ -754,127 +726,174 @@ const closeNewsDetail = (key: string) => {
 								</li>
 							{/each}
 						</ul>
-					{/if}
-				</InfoWindow>
+							{/if}
+					</InfoWindow>
 			{:else if window.type === 'sns'}
-				{#if snsPlatformMap.has(window.platform)}
-					{@const platform = snsPlatformMap.get(window.platform)!}
-					<InfoWindow
-						title={`SNS — ${platform.label}`}
-						subtitle={platform.description}
-						position={window.position}
-						size={window.size}
-						zIndex={window.z}
-						lockedTop={navHeight}
-						minWidth={320}
-						minHeight={280}
-						on:move={(event) => handleMove(window.key, event.detail)}
-						on:resize={(event) => handleResize(window.key, event.detail)}
-						on:focus={() => bringToFront(window.key)}
-						on:close={() => closeWindow(window.key)}
+				{@const selectedPlatforms = window.platforms}
+				{@const hasAllPlatforms = selectedPlatforms.length === snsPlatforms.length}
+				{@const platformLabels = selectedPlatforms
+					.map((id) => snsPlatformMap.get(id)?.label ?? id)}
+				{@const singlePlatform =
+					!hasAllPlatforms && selectedPlatforms.length === 1
+						? snsPlatformMap.get(selectedPlatforms[0])
+						: null}
+				{@const primaryPlatformLabel = hasAllPlatforms
+					? '전체'
+					: platformLabels.length <= 2
+						? platformLabels.join(', ')
+						: `${platformLabels.slice(0, 2).join(', ')} 외 ${platformLabels.length - 2}곳`}
+				{@const platformSubtitle = hasAllPlatforms
+					? '모든 플랫폼의 실시간 커뮤니티 업데이트를 한 곳에서 확인하세요.'
+					: singlePlatform
+						? singlePlatform.description
+						: `선택한 ${platformLabels.length}개 플랫폼의 실시간 커뮤니티 업데이트입니다.`}
+				{@const snsItems = getSNSItems(selectedPlatforms)}
+				<InfoWindow
+					title={`SNS — ${primaryPlatformLabel}`}
+					subtitle={platformSubtitle}
+					position={window.position}
+					size={window.size}
+					zIndex={window.z}
+					lockedTop={navHeight}
+					minWidth={320}
+					minHeight={300}
+					on:move={(event) => handleMove(window.key, event.detail)}
+					on:resize={(event) => handleResize(window.key, event.detail)}
+					on:focus={() => bringToFront(window.key)}
+					on:close={() => closeWindow(window.key)}
 					>
-				{#if window.view === 'detail' && window.selectedIndex !== null}
-					{@const post = platform.posts[window.selectedIndex]}
-					<div class="detail-view">
-						<button type="button" class="detail-back" on:click={() => closeSNSDetail(window.key)}>
-							← 뒤로가기
-						</button>
-						{#if post}
-							<div class="sns-detail-profile">
-								<img src={post.avatar} alt={`${post.nickname} avatar`} />
-								<div>
-									<strong>{post.nickname}</strong>
-									<span class="meta">{post.handle} · {post.timeAgo}</span>
-								</div>
+						{#if window.view === 'detail' && window.selectedIndex !== null}
+							{@const post = snsItems[window.selectedIndex]}
+							<div class="detail-view">
+								<button type="button" class="detail-back" on:click={() => closeSNSDetail(window.key)}>
+									← 뒤로가기
+								</button>
+								{#if post}
+									<div class="sns-detail-profile">
+										<img src={post.avatar} alt={`${post.nickname} avatar`} />
+										<div>
+											<strong>{post.nickname}</strong>
+											<span class="meta">{post.handle} · {post.timeAgo}</span>
+											<span class="sns-detail-source">{post.platformLabel}</span>
+										</div>
+									</div>
+									<p class="detail-description">{post.content}</p>
+									<p class="detail-body">{post.detail}</p>
+								{:else}
+									<p class="detail-description">선택된 게시글을 찾을 수 없습니다.</p>
+								{/if}
 							</div>
-							<p class="detail-description">{post.content}</p>
-							<p class="detail-body">{post.detail}</p>
-						{:else}
-							<p class="detail-description">선택된 게시글을 찾을 수 없습니다.</p>
-						{/if}
-					</div>
-						{:else}
-							<ul class="window-list window-list--sns">
-								{#each platform.posts as post, index}
-									<li>
-										<button type="button" class="list-button sns-button" on:click={() => openSNSDetail(window.key, index)}>
-											<div class="sns-profile">
-												<img src={post.avatar} alt={`${post.nickname} avatar`} />
-												<div>
-													<span class="sns-author">{post.nickname}</span>
-													<span class="sns-handle">{post.handle}</span>
+							{:else}
+								<p class="filter-label">
+									{hasAllPlatforms
+										? '전체 플랫폼 실시간 업데이트'
+										: `${primaryPlatformLabel} 실시간 업데이트`}
+								</p>
+								<ul class="window-list window-list--sns">
+									{#each snsItems as post, index}
+										<li>
+											<button type="button" class="list-button sns-button" on:click={() => openSNSDetail(window.key, index)}>
+												<div class="sns-profile">
+													<img src={post.avatar} alt={`${post.nickname} avatar`} />
+													<div>
+														<span class="sns-author">{post.nickname}</span>
+														<span class="sns-handle">{post.handle}</span>
+													</div>
 												</div>
-											</div>
-											<p>{post.content}</p>
-											<span class="sns-time">{post.timeAgo}</span>
-										</button>
-									</li>
-								{/each}
-							</ul>
-						{/if}
+												<p>{post.content}</p>
+												<div class="sns-meta-row">
+													<span class="sns-time">{post.timeAgo}</span>
+													<span class="sns-source">{post.platformLabel}</span>
+												</div>
+											</button>
+										</li>
+									{/each}
+								</ul>
+							{/if}
 					</InfoWindow>
-				{/if}
 			{:else if window.type === 'news'}
-				{#if newsSourceMap.has(window.source)}
-					{@const source = newsSourceMap.get(window.source)!}
-					<InfoWindow
-						title={`뉴스 — ${source.label}`}
-						subtitle={`${source.region} 주요 헤드라인`}
-						position={window.position}
-						size={window.size}
-						zIndex={window.z}
-						lockedTop={navHeight}
-						minWidth={360}
-						minHeight={280}
-						on:move={(event) => handleMove(window.key, event.detail)}
-						on:resize={(event) => handleResize(window.key, event.detail)}
-						on:focus={() => bringToFront(window.key)}
+				{@const selectedSources = window.sources}
+				{@const hasAllSources = selectedSources.length === newsSources.length}
+				{@const sourceLabels = selectedSources
+					.map((id) => newsSourceMap.get(id)?.label ?? id)}
+				{@const singleSource =
+					!hasAllSources && selectedSources.length === 1
+						? newsSourceMap.get(selectedSources[0])
+						: null}
+				{@const primarySourceLabel = hasAllSources
+					? '전체'
+					: sourceLabels.length <= 2
+						? sourceLabels.join(', ')
+						: `${sourceLabels.slice(0, 2).join(', ')} 외 ${sourceLabels.length - 2}곳`}
+				{@const sourceSubtitle = hasAllSources
+					? '신뢰도 높은 언론사의 최신 헤드라인을 모았습니다.'
+					: singleSource
+						? `${singleSource.region} 주요 헤드라인`
+						: `선택한 ${sourceLabels.length}개 언론사의 최신 헤드라인을 모았습니다.`}
+				{@const newsItems = getNewsItems(selectedSources)}
+				<InfoWindow
+					title={`뉴스 — ${primarySourceLabel}`}
+					subtitle={sourceSubtitle}
+					position={window.position}
+					size={window.size}
+					zIndex={window.z}
+					lockedTop={navHeight}
+					minWidth={360}
+					minHeight={300}
+					on:move={(event) => handleMove(window.key, event.detail)}
+					on:resize={(event) => handleResize(window.key, event.detail)}
+					on:focus={() => bringToFront(window.key)}
 						on:close={() => closeWindow(window.key)}
-					>
-				{#if window.view === 'detail' && window.selectedIndex !== null}
-					{@const headline = source.headlines[window.selectedIndex]}
-					<div class="detail-view">
-						<button type="button" class="detail-back" on:click={() => closeNewsDetail(window.key)}>
-							← 뒤로가기
-						</button>
-						{#if headline}
-							<div class="detail-header">
-								<h4>{headline.title}</h4>
-								<span class="meta">{headline.timeAgo}</span>
+						>
+							{#if window.view === 'detail' && window.selectedIndex !== null}
+								{@const headline = newsItems[window.selectedIndex]}
+								<div class="detail-view">
+									<button type="button" class="detail-back" on:click={() => closeNewsDetail(window.key)}>
+										← 뒤로가기
+								</button>
+								{#if headline}
+									<div class="detail-header">
+										<h4>{headline.title}</h4>
+										<span class="meta">{headline.timeAgo} · {headline.sourceLabel}</span>
+									</div>
+									<p class="detail-description">{headline.summary}</p>
+									<p class="detail-body">{headline.body}</p>
+								{:else}
+									<p class="detail-description">선택한 뉴스 기사를 표시하지 못했습니다.</p>
+								{/if}
 							</div>
-							<p class="detail-description">{headline.summary}</p>
-							<p class="detail-body">{headline.body}</p>
-						{:else}
-							<p class="detail-description">선택한 뉴스 기사를 표시하지 못했습니다.</p>
-						{/if}
-					</div>
-						{:else}
-							<ol class="window-list window-list--news">
-								{#each source.headlines as headline, index}
-									<li>
-										<button type="button" class="list-button news-button" on:click={() => openNewsDetail(window.key, index)}>
-											<span class="news-index">{index + 1}</span>
-											<div class="news-body">
-												<strong>{headline.title}</strong>
-												<span class="meta">{headline.timeAgo}</span>
-												<p class="list-description">{headline.summary}</p>
-											</div>
-										</button>
-									</li>
-								{/each}
-							</ol>
-						{/if}
+							{:else}
+								<p class="filter-label">
+									{hasAllSources
+										? '전체 언론사 최신 헤드라인'
+										: `${primarySourceLabel} 최신 헤드라인`}
+								</p>
+								<ol class="window-list window-list--news">
+									{#each newsItems as headline, index}
+										<li>
+											<button type="button" class="list-button news-button" on:click={() => openNewsDetail(window.key, index)}>
+												<span class="news-index">{index + 1}</span>
+												<div class="news-body">
+													<strong>{headline.title}</strong>
+													<span class="meta">{headline.timeAgo} · {headline.sourceLabel}</span>
+													<p class="list-description">{headline.summary}</p>
+												</div>
+											</button>
+										</li>
+									{/each}
+								</ol>
+							{/if}
 					</InfoWindow>
-				{/if}
 			{/if}
 		{/each}
-	</main>
+		</main>
+	{/if}
 </div>
 
 <style>
 	:global(body) {
-		background: radial-gradient(circle at top, #040c18 0%, #030712 38%, #02040a 100%);
-		color: #f0f6ff;
+		background: #222222;
+		color: #e5e5e5;
 		font-family: 'Inter', 'Pretendard', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 		min-height: 100vh;
 		margin: 0;
@@ -893,9 +912,8 @@ const closeNewsDetail = (key: string) => {
 		align-items: center;
 		justify-content: space-between;
 		padding: 16px 28px;
-		backdrop-filter: blur(18px);
-		background: rgba(3, 8, 20, 0.86);
-		border-bottom: 1px solid rgba(35, 50, 72, 0.65);
+		background: #282a2c;
+		border-bottom: 1px solid #3b3b3b;
 		z-index: 1000;
 		gap: 24px;
 	}
@@ -913,13 +931,15 @@ const closeNewsDetail = (key: string) => {
 		align-items: center;
 		justify-content: center;
 		padding: 6px 10px;
-		border-radius: 10px;
-		background: linear-gradient(135deg, #4f46e5, #9333ea);
+		border-radius: 6px;
+		background: #3b3b3b;
+		color: #ffffff;
 		font-size: 0.75rem;
+		font-weight: 600;
 	}
 
 	.brand__mode {
-		color: rgba(210, 224, 255, 0.72);
+		color: #b0b0b0;
 		font-size: 0.8rem;
 	}
 
@@ -934,50 +954,49 @@ const closeNewsDetail = (key: string) => {
 
 	.menu button {
 		padding: 8px 14px;
-		border-radius: 999px;
+		border-radius: 6px;
 		border: none;
 		background: transparent;
-		color: rgba(231, 239, 255, 0.72);
+		color: #d0d0d0;
 		cursor: pointer;
 		font-size: 0.9rem;
-		transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+		transition: all 0.2s ease;
 	}
 
 	.menu button:hover {
-		color: #f7fbff;
-		transform: translateY(-1px);
+		color: #ffffff;
+		background: #3b3b3b;
 	}
 
 	.menu button.active {
-		background: rgba(80, 70, 245, 0.2);
-		color: #d7dcff;
-		box-shadow: 0 0 0 1px rgba(80, 70, 245, 0.45);
+		background: #3b3b3b;
+		color: #ffffff;
+		border: 1px solid #5a5a5a;
 	}
 
 	.mode-toggle {
 		display: inline-flex;
-		background: rgba(20, 28, 48, 0.86);
-		border-radius: 999px;
+		background: #222222;
+		border-radius: 6px;
 		padding: 4px;
 		gap: 4px;
-		box-shadow: inset 0 0 0 1px rgba(70, 90, 130, 0.45);
+		border: 1px solid #3b3b3b;
 	}
 
 	.mode-toggle button {
 		border: none;
 		background: transparent;
-		color: rgba(196, 210, 232, 0.7);
+		color: #b0b0b0;
 		padding: 6px 16px;
-		border-radius: 999px;
+		border-radius: 4px;
 		cursor: pointer;
 		font-size: 0.82rem;
-		transition: background 0.25s ease, color 0.25s ease;
+		transition: all 0.2s ease;
 	}
 
 	.mode-toggle button.active {
-		background: linear-gradient(135deg, #6366f1, #8b5cf6);
-		color: #fff;
-		box-shadow: 0 8px 16px rgba(99, 102, 241, 0.35);
+		background: #3b3b3b;
+		color: #ffffff;
 	}
 
 	.menu-modal {
@@ -989,10 +1008,10 @@ const closeNewsDetail = (key: string) => {
 	}
 
 	.menu-modal__panel {
-		background: rgba(8, 14, 32, 0.92);
-		border-radius: 22px;
-		border: 1px solid rgba(45, 64, 98, 0.55);
-		box-shadow: 0 24px 60px rgba(2, 8, 24, 0.55);
+		background: #282a2c;
+		border-radius: 12px;
+		border: 1px solid #3b3b3b;
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 		padding: 24px 28px 28px;
 		display: grid;
 		gap: 18px;
@@ -1007,13 +1026,22 @@ const closeNewsDetail = (key: string) => {
 	.menu-modal__header h3 {
 		margin: 0;
 		font-size: 1.05rem;
-		color: rgba(236, 242, 255, 0.95);
+		color: #ffffff;
 	}
 
 	.menu-modal__header p {
 		margin: 0;
-		color: rgba(196, 210, 236, 0.7);
+		color: #b0b0b0;
 		font-size: 0.82rem;
+	}
+
+	.general-container {
+		width: 100%;
+		max-width: 1280px;
+		margin: 0 auto;
+		padding: 0 32px 80px;
+		box-sizing: border-box;
+		min-height: 100vh;
 	}
 
 	.workspace {
@@ -1022,7 +1050,7 @@ const closeNewsDetail = (key: string) => {
 		margin: 0 auto;
 		padding: 0 32px 72px;
 		position: relative;
- }
+	}
 
 	.instrument-list {
 		display: grid;
@@ -1035,23 +1063,24 @@ const closeNewsDetail = (key: string) => {
 		align-items: center;
 		gap: 10px;
 		padding: 10px 12px;
-		border-radius: 14px;
-		background: rgba(18, 28, 50, 0.72);
-		border: 1px solid transparent;
-		color: rgba(222, 233, 255, 0.8);
+		border-radius: 6px;
+		background: #222222;
+		border: 1px solid #3b3b3b;
+		color: #d0d0d0;
 		cursor: pointer;
-		transition: border 0.15s ease, transform 0.15s ease, background 0.15s ease;
+		transition: all 0.2s ease;
 	}
 
 	.instrument-list button:hover {
-		border-color: rgba(119, 143, 255, 0.6);
-		transform: translateY(-1px);
+		border-color: #5a5a5a;
+		background: #3b3b3b;
+		color: #ffffff;
 	}
 
 	.instrument-list button.active {
-		border-color: rgba(136, 108, 255, 0.95);
-		background: rgba(60, 45, 145, 0.5);
-		color: #fff;
+		border-color: #5a5a5a;
+		background: #3b3b3b;
+		color: #ffffff;
 	}
 
 	.instrument-list .dot {
@@ -1067,7 +1096,7 @@ const closeNewsDetail = (key: string) => {
 
 	.instrument-list .symbol {
 		font-size: 0.75rem;
-		color: rgba(207, 220, 240, 0.5);
+		color: #b0b0b0;
 	}
 
 	.chart-stage {
@@ -1077,8 +1106,8 @@ const closeNewsDetail = (key: string) => {
 		right: 0;
 		bottom: 0;
 		border-radius: 0;
-		background: rgba(8, 14, 32, 0.6);
-		border-top: 1px solid rgba(32, 48, 78, 0.55);
+		background: #222222;
+		border-top: 1px solid #3b3b3b;
 		z-index: 0;
 		pointer-events: none;
 	}
@@ -1087,10 +1116,10 @@ const closeNewsDetail = (key: string) => {
 		position: absolute;
 		inset: 0;
 		background-image:
-			linear-gradient(rgba(40, 52, 82, 0.25) 1px, transparent 1px),
-			linear-gradient(90deg, rgba(40, 52, 82, 0.25) 1px, transparent 1px);
+			linear-gradient(#3b3b3b 1px, transparent 1px),
+			linear-gradient(90deg, #3b3b3b 1px, transparent 1px);
 		background-size: 60px 60px;
-		filter: brightness(0.8);
+		opacity: 0.3;
 	}
 
 	.empty-state {
@@ -1098,7 +1127,7 @@ const closeNewsDetail = (key: string) => {
 		inset: 0;
 		display: grid;
 		place-items: center;
-		color: rgba(195, 208, 236, 0.6);
+		color: #b0b0b0;
 		font-size: 1rem;
 		letter-spacing: 0.02em;
 		pointer-events: none;
@@ -1116,25 +1145,25 @@ const closeNewsDetail = (key: string) => {
 		display: grid;
 		gap: 4px;
 		padding: 14px 18px;
-		border-radius: 16px;
-		background: rgba(16, 24, 46, 0.8);
-		border: 1px solid rgba(40, 60, 94, 0.55);
+		border-radius: 8px;
+		background: #222222;
+		border: 1px solid #3b3b3b;
 	}
 
 	.modal-list li strong {
 		font-size: 0.86rem;
-		color: rgba(219, 230, 255, 0.92);
+		color: #ffffff;
 	}
 
 	.modal-list li span {
 		font-size: 0.82rem;
-		color: rgba(197, 208, 235, 0.72);
+		color: #b0b0b0;
 	}
 
 	.modal-note {
 		margin: 0;
 		font-size: 0.78rem;
-		color: rgba(180, 198, 232, 0.65);
+		color: #b0b0b0;
 		line-height: 1.4;
 	}
 
@@ -1142,25 +1171,25 @@ const closeNewsDetail = (key: string) => {
 		justify-self: flex-end;
 		border: none;
 		padding: 10px 18px;
-		border-radius: 999px;
-		background: linear-gradient(135deg, rgba(94, 97, 255, 0.18), rgba(154, 102, 255, 0.45));
-		color: rgba(230, 236, 255, 0.95);
+		border-radius: 6px;
+		background: #3b3b3b;
+		color: #ffffff;
 		cursor: pointer;
 		font-size: 0.82rem;
-		transition: background 0.2s ease, box-shadow 0.2s ease;
+		transition: all 0.2s ease;
 	}
 
 	.modal-action:hover {
-		background: linear-gradient(135deg, rgba(108, 112, 255, 0.4), rgba(162, 112, 255, 0.66));
-		box-shadow: 0 10px 22px rgba(106, 110, 255, 0.25);
+		background: #4a4a4a;
+		border: 1px solid #5a5a5a;
 	}
 
 	.modal-action.disabled,
 	.modal-action[disabled] {
 		opacity: 0.55;
 		cursor: not-allowed;
-		box-shadow: none;
-		background: rgba(80, 70, 140, 0.35);
+		background: #2a2a2a;
+		color: #808080;
 	}
 
 	.option-grid {
@@ -1175,26 +1204,25 @@ const closeNewsDetail = (key: string) => {
 		flex-direction: column;
 		gap: 10px;
 		padding: 16px 18px;
-		border-radius: 16px;
-		border: 1px solid rgba(50, 70, 108, 0.6);
-		background: rgba(14, 22, 42, 0.65);
-		color: rgba(215, 228, 255, 0.8);
+		border-radius: 8px;
+		border: 1px solid #3b3b3b;
+		background: #222222;
+		color: #d0d0d0;
 		cursor: pointer;
 		text-align: left;
-		transition: border 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+		transition: all 0.2s ease;
 	}
 
 	.option-card:hover {
-		border-color: rgba(120, 156, 255, 0.8);
-		box-shadow: 0 14px 30px rgba(40, 70, 140, 0.28);
-		transform: translateY(-2px);
+		border-color: #5a5a5a;
+		background: #3b3b3b;
+		color: #ffffff;
 	}
 
 	.option-card.active {
-		border-color: rgba(140, 120, 255, 0.95);
-		background: rgba(58, 48, 130, 0.6);
-		color: #f4f6ff;
-		box-shadow: 0 18px 34px rgba(70, 60, 150, 0.4);
+		border-color: #5a5a5a;
+		background: #3b3b3b;
+		color: #ffffff;
 	}
 
 	.option-card__badge {
@@ -1203,9 +1231,9 @@ const closeNewsDetail = (key: string) => {
 		justify-content: center;
 		align-self: flex-start;
 		padding: 4px 10px;
-		border-radius: 999px;
-		background: rgba(108, 99, 255, 0.2);
-		color: rgba(208, 216, 255, 0.88);
+		border-radius: 4px;
+		background: #3b3b3b;
+		color: #ffffff;
 		font-size: 0.75rem;
 		font-weight: 600;
 		letter-spacing: 0.02em;
@@ -1213,16 +1241,16 @@ const closeNewsDetail = (key: string) => {
 
 	.option-card__meta {
 		font-size: 0.75rem;
-		color: rgba(174, 202, 255, 0.65);
+		color: #b0b0b0;
 	}
 
 	.modal-placeholder {
 		padding: 28px;
-		border-radius: 18px;
-		background: rgba(15, 24, 46, 0.7);
-		border: 1px dashed rgba(70, 90, 140, 0.5);
+		border-radius: 8px;
+		background: #222222;
+		border: 1px dashed #3b3b3b;
 		text-align: center;
-		color: rgba(195, 210, 238, 0.65);
+		color: #b0b0b0;
 		font-size: 0.88rem;
 	}
 
@@ -1242,9 +1270,9 @@ const closeNewsDetail = (key: string) => {
 	.window-list--sns li,
 	.window-list--news li {
 		padding: 16px 18px;
-		border-radius: 16px;
-		background: rgba(12, 18, 36, 0.75);
-		border: 1px solid rgba(38, 56, 92, 0.55);
+		border-radius: 8px;
+		background: #222222;
+		border: 1px solid #3b3b3b;
 		display: grid;
 		gap: 10px;
 	}
@@ -1260,9 +1288,9 @@ const closeNewsDetail = (key: string) => {
 		align-items: center;
 		justify-content: center;
 		padding: 4px 10px;
-		border-radius: 999px;
-		background: rgba(100, 120, 255, 0.22);
-		color: rgba(204, 220, 255, 0.9);
+		border-radius: 4px;
+		background: #3b3b3b;
+		color: #ffffff;
 		font-size: 0.75rem;
 		font-weight: 600;
 		min-width: 56px;
@@ -1276,23 +1304,29 @@ const closeNewsDetail = (key: string) => {
 
 	.event-info strong {
 		font-size: 0.92rem;
-		color: rgba(235, 242, 255, 0.95);
+		color: #ffffff;
 	}
 
 	.event-info .meta {
 		font-size: 0.78rem;
-		color: rgba(190, 206, 238, 0.7);
+		color: #b0b0b0;
+	}
+
+	.filter-label {
+		margin: 0 0 12px;
+		font-size: 0.76rem;
+		color: #b0b0b0;
 	}
 
 	.window-list--sns li p {
 		margin: 0;
-		color: rgba(213, 226, 255, 0.82);
+		color: #d0d0d0;
 		line-height: 1.45;
 	}
 
 	.sns-author {
 		font-weight: 600;
-		color: rgba(200, 220, 255, 0.85);
+		color: #ffffff;
 	}
 
 	.sns-time {
@@ -1315,9 +1349,9 @@ const closeNewsDetail = (key: string) => {
 		justify-content: center;
 		width: 24px;
 		height: 24px;
-		border-radius: 999px;
-		background: rgba(110, 128, 255, 0.22);
-		color: rgba(208, 218, 255, 0.9);
+		border-radius: 4px;
+		background: #3b3b3b;
+		color: #ffffff;
 		font-size: 0.75rem;
 		font-weight: 600;
 	}
@@ -1330,12 +1364,12 @@ const closeNewsDetail = (key: string) => {
 
 	.news-body strong {
 		font-size: 0.92rem;
-		color: rgba(234, 240, 255, 0.95);
+		color: #ffffff;
 	}
 
 	.news-body .meta {
 		font-size: 0.76rem;
-		color: rgba(180, 200, 234, 0.68);
+		color: #b0b0b0;
 	}
 
 	.list-button {
@@ -1352,18 +1386,18 @@ const closeNewsDetail = (key: string) => {
 	}
 
 	.list-button:hover {
-		color: rgba(233, 240, 255, 0.95);
+		color: #ffffff;
 	}
 
 	.list-button:focus-visible {
-		outline: 2px solid rgba(140, 160, 255, 0.7);
+		outline: 2px solid #5a5a5a;
 		outline-offset: 3px;
 	}
 
 	.list-description {
 		margin: 0;
 		font-size: 0.8rem;
-		color: rgba(184, 204, 238, 0.7);
+		color: #b0b0b0;
 		line-height: 1.4;
 	}
 
@@ -1374,19 +1408,19 @@ const closeNewsDetail = (key: string) => {
 
 	.detail-back {
 		align-self: flex-start;
-		background: rgba(18, 30, 60, 0.85);
-		border: 1px solid rgba(60, 90, 150, 0.6);
-		color: rgba(206, 220, 255, 0.85);
+		background: #222222;
+		border: 1px solid #3b3b3b;
+		color: #d0d0d0;
 		padding: 6px 12px;
-		border-radius: 999px;
+		border-radius: 6px;
 		cursor: pointer;
 		font-size: 0.78rem;
-		transition: background 0.2s ease, color 0.2s ease;
+		transition: all 0.2s ease;
 	}
 
 	.detail-back:hover {
-		background: rgba(80, 100, 200, 0.3);
-		color: #fff;
+		background: #3b3b3b;
+		color: #ffffff;
 	}
 
 	.detail-header {
@@ -1404,20 +1438,20 @@ const closeNewsDetail = (key: string) => {
 	.detail-titles h4 {
 		margin: 0;
 		font-size: 1rem;
-		color: rgba(240, 244, 255, 0.96);
+		color: #ffffff;
 	}
 
 	.detail-description {
 		margin: 0;
 		font-size: 0.85rem;
-		color: rgba(195, 210, 240, 0.85);
+		color: #d0d0d0;
 		line-height: 1.45;
 	}
 
 	.detail-body {
 		margin: 0;
 		font-size: 0.86rem;
-		color: rgba(229, 237, 255, 0.9);
+		color: #e5e5e5;
 		line-height: 1.6;
 	}
 
@@ -1442,41 +1476,62 @@ const closeNewsDetail = (key: string) => {
 		gap: 12px;
 	}
 
+	.sns-meta-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin-top: 8px;
+	}
+
 	.sns-author {
 		display: block;
 		font-weight: 600;
-		color: rgba(220, 230, 255, 0.92);
+		color: #ffffff;
 	}
 
 	.sns-handle {
 		display: block;
 		font-size: 0.75rem;
-		color: rgba(170, 195, 236, 0.65);
+		color: #b0b0b0;
 	}
 
 	.sns-time {
-		display: block;
+		display: inline-flex;
 		font-size: 0.75rem;
-		color: rgba(158, 186, 230, 0.65);
+		color: #b0b0b0;
 	}
 
 	.sns-button p {
 		margin: 8px 0 0;
 		font-size: 0.9rem;
-		color: rgba(225, 234, 255, 0.9);
+		color: #d0d0d0;
 	}
 
 	.sns-detail-profile div strong {
 		display: block;
 		font-size: 0.92rem;
-		color: rgba(236, 242, 255, 0.96);
+		color: #ffffff;
 	}
 
 	.sns-detail-profile div .meta {
 		display: block;
 		font-size: 0.76rem;
-		color: rgba(180, 200, 236, 0.7);
+		color: #b0b0b0;
 		margin-top: 2px;
+	}
+
+	.sns-source {
+		font-size: 0.74rem;
+		color: #b0b0b0;
+		margin-left: auto;
+	}
+
+	.sns-detail-source {
+		display: inline-block;
+		margin-top: 6px;
+		font-size: 0.76rem;
+		color: #b0b0b0;
 	}
 
 	.news-button {
@@ -1503,17 +1558,17 @@ const closeNewsDetail = (key: string) => {
 	}
 
 	:global(*::-webkit-scrollbar-thumb) {
-		background: linear-gradient(135deg, rgba(110, 122, 208, 0.55), rgba(92, 69, 210, 0.55));
-		border-radius: 999px;
+		background: #3b3b3b;
+		border-radius: 4px;
 	}
 
 	:global(*::-webkit-scrollbar-thumb:hover) {
-		background: linear-gradient(135deg, rgba(128, 140, 226, 0.7), rgba(112, 86, 226, 0.7));
+		background: #5a5a5a;
 	}
 
 	:global(*) {
 		scrollbar-width: thin;
-		scrollbar-color: rgba(120, 132, 210, 0.6) transparent;
+		scrollbar-color: #3b3b3b transparent;
 	}
 
 	@media (max-width: 880px) {
