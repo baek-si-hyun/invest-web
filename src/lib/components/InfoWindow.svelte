@@ -170,7 +170,7 @@
 		flex-direction: column;
 		background: var(--c-bg-800);
 		border-radius: var(--radius-md);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 		color: var(--c-text-primary);
 		overflow: hidden;
@@ -182,7 +182,7 @@
 		justify-content: space-between;
 		padding: 12px 18px;
 		background: var(--c-bg-900);
-		border-bottom: 1px solid var(--c-bg-700);
+		border-bottom: 1px solid var(--c-border-strong);
 		gap: 12px;
 		cursor: grab;
 		user-select: none;
@@ -250,8 +250,8 @@
 	.window__resize-handle span {
 		width: 100%;
 		height: 100%;
-		border-right: 2px solid rgba(255, 255, 255, 0.35);
-		border-bottom: 2px solid rgba(255, 255, 255, 0.35);
+		border-right: 2px solid var(--c-border-hover);
+		border-bottom: 2px solid var(--c-border-hover);
 		border-radius: 0 0 4px 0;
 	}
 </style>

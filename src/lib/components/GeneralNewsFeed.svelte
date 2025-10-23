@@ -210,7 +210,7 @@ const publisherList = newsSources.map((source) => ({
 		gap: 28px;
 		color: var(--c-text-primary);
 		background: var(--c-bg-800);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		border-radius: var(--radius-lg);
 		padding: 36px;
 		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
@@ -252,7 +252,7 @@ const publisherList = newsSources.map((source) => ({
 	}
 
 	.meta-chip--notice {
-		background: rgba(255, 255, 255, 0.12);
+		background: var(--c-overlay-strong);
 	}
 
 	.region-tabs {
@@ -261,7 +261,7 @@ const publisherList = newsSources.map((source) => ({
 		background: var(--c-bg-900);
 		padding: 6px;
 		border-radius: var(--radius-sm);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		width: fit-content;
 	}
 
@@ -278,7 +278,7 @@ const publisherList = newsSources.map((source) => ({
 
 	.region-tabs button:hover {
 		color: var(--c-text-primary);
-		background: var(--c-bg-700);
+		background: var(--c-surface-hover);
 	}
 
 	.region-tabs button.active {
@@ -306,7 +306,7 @@ const publisherList = newsSources.map((source) => ({
 		grid-template-rows: auto 1fr;
 		gap: 14px;
 		background: var(--c-bg-900);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		border-radius: var(--radius-md);
 		padding: 20px 18px;
 		min-height: 0;
@@ -363,12 +363,13 @@ const publisherList = newsSources.map((source) => ({
 
 	.publisher-sidebar button:hover {
 		transform: translateY(-1px);
-		background: rgba(255, 255, 255, 0.12);
+		background: var(--c-overlay-strong);
+		border-color: var(--c-border-soft);
 	}
 
 	.publisher-sidebar button.selected {
-		background: rgba(255, 255, 255, 0.12);
-		border: 1px solid rgba(255, 255, 255, 0.16);
+		background: var(--c-overlay-strong);
+		border: 1px solid var(--c-border-hover);
 	}
 
 	.publisher-dot {
@@ -458,7 +459,7 @@ const publisherList = newsSources.map((source) => ({
 		padding: 24px;
 		border-radius: var(--radius-md);
 		background: var(--c-bg-900);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		position: relative;
 	}
 

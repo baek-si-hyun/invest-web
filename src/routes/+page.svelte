@@ -4,6 +4,7 @@
 	import GeneralDashboard from '$lib/components/GeneralDashboard.svelte';
 	import GeneralSNSFeed from '$lib/components/GeneralSNSFeed.svelte';
 	import GeneralNewsFeed from '$lib/components/GeneralNewsFeed.svelte';
+	import { economicEvents as calendarEconomicEvents, type EconomicEvent } from '$lib/data/economicEvents';
 	import GeneralPlaceholder from '$lib/components/GeneralPlaceholder.svelte';
 	import InfoWindow from '$lib/components/InfoWindow.svelte';
 	import { instruments } from '$lib/data/instruments';
@@ -23,53 +24,8 @@
 
 	const instrumentMap = new Map(instruments.map((instrument) => [instrument.id, instrument] as const));
 
-type EconomicEvent = {
-	time: string;
-	region: string;
-	title: string;
-	impact: '높음' | '중간' | '낮음';
-	description: string;
-	details: string;
-};
 
-const economicEvents: EconomicEvent[] = [
-	{
-		time: '08:30',
-		region: '미국',
-		title: '비농업 고용지수(NFP)',
-		impact: '높음',
-		description: '미국 경제의 고용 흐름을 보여주는 대표 지표로, 연준 정책 판단에 큰 영향을 줍니다.',
-		details:
-			'이번 달 예상치는 20만 명 초반, 이전 발표(18.7만 명) 대비 소폭 증가할 것으로 시장은 보고 있습니다. 발표 직후 달러 강세·약세, 채권 금리 방향에 주목하세요.'
-	},
-	{
-		time: '10:00',
-		region: '미국',
-		title: 'ISM 제조업 PMI',
-		impact: '중간',
-		description: '제조업체 구매 담당자들의 경기 체감을 집계한 지수로, 50 이상이면 확장 국면으로 해석합니다.',
-		details:
-			'최근 6개월 연속 50 미만을 기록하며 둔화가 이어졌습니다. 이번 발표에서 50선 돌파 여부가 관건이며, 달러·원자재 시장 변동성에 영향이 예상됩니다.'
-	},
-	{
-		time: '11:00',
-		region: '유럽',
-		title: 'ECB 총재 연설',
-		impact: '높음',
-		description: '유럽중앙은행 총재의 발언은 향후 금리 경로와 유로화 흐름에 직접적인 방향성을 제시합니다.',
-		details:
-			'최근 경기 둔화 우려 속에서도 물가 압력은 여전히 높다는 평가가 많습니다. 완화적 뉘앙스가 나오면 유로화 약세, 반대 경우에는 강세로 이어질 수 있습니다.'
-	},
-	{
-		time: '22:30',
-		region: '한국',
-		title: '소비자물가(CPI) 발표',
-		impact: '높음',
-		description: '한국의 물가 흐름을 보여주는 대표 지표로, 기준금리 결정에 선행 지표 역할을 합니다.',
-		details:
-			'에너지와 식료품 가격 하락이 이어지며 최근 둔화 흐름을 보이고 있습니다. 예상치보다 낮게 나오면 금리 인하 기대가 커질 수 있습니다.'
-	}
-];
+
 
 const snsPlatformMap = new Map(snsPlatforms.map((platform) => [platform.id, platform] as const));
 type PlatformId = SocialPlatform['id'];
@@ -101,12 +57,57 @@ type NewsWindowState = WindowBase & {
 
 type WindowState = ChartWindowState | EventsWindowState | SNSWindowState | NewsWindowState;
 
+const eventDateFormatter = new Intl.DateTimeFormat('ko-KR', {
+	month: 'numeric',
+	day: 'numeric',
+	weekday: 'short'
+});
+
+const eventDateTimeFormatter = new Intl.DateTimeFormat('ko-KR', {
+	month: 'numeric',
+	day: 'numeric',
+	hour: '2-digit',
+	minute: '2-digit'
+});
+
+const toEventDate = (event: EconomicEvent) => {
+	const isoString = `${event.date}T${event.time || '00:00'}`;
+	return new Date(isoString);
+};
+
+const sortedCalendarEvents: EconomicEvent[] = [...calendarEconomicEvents].sort(
+	(a, b) => toEventDate(a).getTime() - toEventDate(b).getTime()
+);
+
+const nowPointer = new Date();
+const upcomingCalendarEvents = sortedCalendarEvents.filter((event) => toEventDate(event) >= nowPointer);
+const economicEvents: EconomicEvent[] =
+	upcomingCalendarEvents.length ? upcomingCalendarEvents : sortedCalendarEvents;
+const menuPreviewEvents = economicEvents.slice(0, 3);
+
+const formatEventDateLabel = (event: EconomicEvent) => eventDateFormatter.format(toEventDate(event));
+const formatEventDateTimeLabel = (event: EconomicEvent) => eventDateTimeFormatter.format(toEventDate(event));
+const formatEventTimeLabel = (event: EconomicEvent) =>
+	event.time + (event.timezone ? ` ${event.timezone}` : '');
+
+let theme: 'dark' | 'light' = 'dark';
+
+const toggleTheme = () => {
+	theme = theme === 'dark' ? 'light' : 'dark';
+};
+
 let mode: Mode = 'pro';
 	let hoveredSection: Section | null = null;
 	let hoverTimer: ReturnType<typeof setTimeout> | null = null;
 	let activeSection: Section | null = 'chart';
 	let generalSection: Section = 'chart';
 	let navHeight = 72;
+
+$: if (typeof document !== 'undefined') {
+	const root = document.documentElement;
+	root.dataset.theme = theme;
+}
+
 	let zCounter = 5;
 	let windows: WindowState[] = [];
 
@@ -474,6 +475,7 @@ const closeNewsDetail = (key: string) => {
 		return { ...window, view: 'list', selectedIndex: null };
 	});
 };
+
 </script>
 
 <div class="layout">
@@ -501,20 +503,32 @@ const closeNewsDetail = (key: string) => {
 			{/each}
 		</ul>
 
-		<div class="mode-toggle" role="group" aria-label="화면 모드 전환">
+		<div class="nav-right">
+			<div class="mode-toggle" role="group" aria-label="화면 모드 전환">
+				<button
+					type="button"
+					class:active={mode === 'general'}
+					on:click={() => setMode('general')}
+				>
+					일반
+				</button>
+				<button
+					type="button"
+					class:active={mode === 'pro'}
+					on:click={() => setMode('pro')}
+				>
+					트레이딩
+				</button>
+			</div>
 			<button
 				type="button"
-				class:active={mode === 'general'}
-				on:click={() => setMode('general')}
+				class="theme-toggle"
+				aria-label={`테마 전환 (${theme === 'dark' ? '라이트' : '다크'})`}
+				on:click={toggleTheme}
 			>
-				일반
-			</button>
-			<button
-				type="button"
-				class:active={mode === 'pro'}
-				on:click={() => setMode('pro')}
-			>
-				트레이딩
+				<div class="material-icons-round">
+					{theme === 'dark' ? 'light_mode' : 'dark_mode'}
+				</div>
 			</button>
 		</div>
 	</nav>
@@ -546,11 +560,11 @@ const closeNewsDetail = (key: string) => {
 						<p>오늘 예정된 발표 일정을 빠르게 훑어보세요.</p>
 					</header>
 					<ul class="modal-list">
-						{#each economicEvents.slice(0, 3) as event}
+						{#each menuPreviewEvents as event}
 							<li>
-								<strong>{event.time}</strong>
-								<span>{event.region} · {event.title}</span>
-								<p class="modal-note">{event.description}</p>
+								<strong>{formatEventDateLabel(event)}</strong>
+								<span>{event.country} · {event.title}</span>
+								<p class="modal-note">{formatEventTimeLabel(event)} · {event.indicator}</p>
 							</li>
 						{/each}
 					</ul>
@@ -697,14 +711,32 @@ const closeNewsDetail = (key: string) => {
 							</button>
 							{#if event}
 								<div class="detail-header">
-									<span class="badge">{event.time}</span>
+									<span class="badge">{formatEventTimeLabel(event)}</span>
 									<div class="detail-titles">
 										<h4>{event.title}</h4>
-													<span class="meta">{event.region}</span>
+										<span class="meta">{formatEventDateTimeLabel(event)} · {event.country}</span>
+										<span class="meta meta-indicator">{event.indicator}</span>
 									</div>
 								</div>
 								<p class="detail-description">{event.description}</p>
-								<p class="detail-body">{event.details}</p>
+								{#if event.forecast || event.previous}
+									<div class="detail-stats">
+										{#if event.forecast}
+											<span><strong>예상</strong> {event.forecast}</span>
+										{/if}
+										{#if event.previous}
+											<span><strong>이전</strong> {event.previous}</span>
+										{/if}
+									</div>
+								{/if}
+								{#if event.relatedThemes.length}
+									<p class="detail-tags">연관 테마: {event.relatedThemes.join(', ')}</p>
+								{/if}
+								{#if event.source}
+									<a class="detail-link" href={event.source} target="_blank" rel="noopener noreferrer">
+										공식 자료 보기
+									</a>
+								{/if}
 							{:else}
 								<p class="detail-description">선택한 이벤트 정보를 불러오지 못했습니다.</p>
 							{/if}
@@ -715,10 +747,11 @@ const closeNewsDetail = (key: string) => {
 								<li>
 									<button type="button" class="list-button" on:click={() => openEventDetail(window.key, index)}>
 										<div class="event-main">
-											<span class="badge">{event.time}</span>
+											<span class="badge">{formatEventTimeLabel(event)}</span>
 											<div class="event-info">
 												<strong>{event.title}</strong>
-												<span class="meta">{event.region}</span>
+												<span class="meta">{formatEventDateLabel(event)} · {event.country}</span>
+												<span class="meta meta-indicator">{event.indicator}</span>
 											</div>
 										</div>
 										<p class="list-description">{event.description}</p>
@@ -913,7 +946,7 @@ const closeNewsDetail = (key: string) => {
 		justify-content: space-between;
 		padding: 16px 28px;
 		background: var(--c-bg-800);
-		border-bottom: 1px solid var(--c-bg-700);
+		border-bottom: 1px solid var(--c-border-strong);
 		z-index: 1000;
 		gap: 24px;
 	}
@@ -932,7 +965,7 @@ const closeNewsDetail = (key: string) => {
 		justify-content: center;
 		padding: 6px 10px;
 		border-radius: var(--radius-sm);
-		background: var(--c-bg-700);
+		background: var(--c-surface-hover);
 		color: var(--c-text-primary);
 		font-size: 0.75rem;
 		font-weight: 600;
@@ -965,13 +998,19 @@ const closeNewsDetail = (key: string) => {
 
 	.menu button:hover {
 		color: var(--c-text-primary);
-		background: var(--c-bg-700);
+		background: var(--c-surface-hover);
 	}
 
 	.menu button.active {
 		background: var(--c-bg-700);
 		color: var(--c-text-primary);
-		border: 1px solid rgba(255, 255, 255, 0.12);
+		border: 1px solid var(--c-border-hover);
+	}
+
+	.nav-right {
+		display: inline-flex;
+		align-items: center;
+		gap: 12px;
 	}
 
 	.mode-toggle {
@@ -980,7 +1019,7 @@ const closeNewsDetail = (key: string) => {
 		border-radius: var(--radius-sm);
 		padding: 4px;
 		gap: 4px;
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 	}
 
 	.mode-toggle button {
@@ -999,6 +1038,30 @@ const closeNewsDetail = (key: string) => {
 		color: var(--c-text-primary);
 	}
 
+	.theme-toggle {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid var(--c-border-strong);
+		border-radius: var(--radius-sm);
+		background: var(--c-bg-900);
+		color: var(--c-text-secondary);
+		padding: 6px 10px;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.theme-toggle:hover {
+		color: var(--c-text-primary);
+		background: var(--c-surface-hover);
+		border-color: var(--c-border-hover);
+	}
+
+	.theme-toggle .material-icons-round {
+		font-size: 1.2rem;
+		line-height: 1;
+	}
+
 	.menu-modal {
 		position: fixed;
 		left: 50%;
@@ -1010,7 +1073,7 @@ const closeNewsDetail = (key: string) => {
 	.menu-modal__panel {
 		background: var(--c-bg-800);
 		border-radius: var(--radius-lg);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 		padding: 24px 28px 28px;
 		display: grid;
@@ -1065,20 +1128,20 @@ const closeNewsDetail = (key: string) => {
 		padding: 10px 12px;
 		border-radius: var(--radius-sm);
 		background: var(--c-bg-900);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		color: var(--c-text-secondary);
 		cursor: pointer;
 		transition: all 0.2s ease;
 	}
 
 	.instrument-list button:hover {
-		border-color: rgba(255, 255, 255, 0.12);
+		border-color: var(--c-border-hover);
 		background: var(--c-bg-700);
 		color: var(--c-text-primary);
 	}
 
 	.instrument-list button.active {
-		border-color: rgba(255, 255, 255, 0.12);
+		border-color: var(--c-border-hover);
 		background: var(--c-bg-700);
 		color: var(--c-text-primary);
 	}
@@ -1107,7 +1170,7 @@ const closeNewsDetail = (key: string) => {
 		bottom: 0;
 		border-radius: 0;
 		background: var(--c-bg-900);
-		border-top: 1px solid var(--c-bg-700);
+		border-top: 1px solid var(--c-border-strong);
 		z-index: 0;
 		pointer-events: none;
 	}
@@ -1147,7 +1210,7 @@ const closeNewsDetail = (key: string) => {
 		padding: 14px 18px;
 		border-radius: var(--radius-md);
 		background: var(--c-bg-900);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 	}
 
 	.modal-list li strong {
@@ -1180,15 +1243,15 @@ const closeNewsDetail = (key: string) => {
 	}
 
 	.modal-action:hover {
-		background: rgba(255, 255, 255, 0.08);
-		border: 1px solid rgba(255, 255, 255, 0.12);
+		background: var(--c-surface-hover);
+		border: 1px solid var(--c-border-hover);
 	}
 
 	.modal-action.disabled,
 	.modal-action[disabled] {
 		opacity: 0.55;
 		cursor: not-allowed;
-		background: rgba(255, 255, 255, 0.04);
+		background: var(--c-overlay-soft);
 		color: var(--c-text-muted);
 	}
 
@@ -1205,7 +1268,7 @@ const closeNewsDetail = (key: string) => {
 		gap: 10px;
 		padding: 16px 18px;
 		border-radius: var(--radius-md);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		background: var(--c-bg-900);
 		color: var(--c-text-secondary);
 		cursor: pointer;
@@ -1214,13 +1277,13 @@ const closeNewsDetail = (key: string) => {
 	}
 
 	.option-card:hover {
-		border-color: rgba(255, 255, 255, 0.12);
+		border-color: var(--c-border-hover);
 		background: var(--c-bg-700);
 		color: var(--c-text-primary);
 	}
 
 	.option-card.active {
-		border-color: rgba(255, 255, 255, 0.12);
+		border-color: var(--c-border-hover);
 		background: var(--c-bg-700);
 		color: var(--c-text-primary);
 	}
@@ -1272,7 +1335,7 @@ const closeNewsDetail = (key: string) => {
 		padding: 16px 18px;
 		border-radius: var(--radius-md);
 		background: var(--c-bg-900);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		display: grid;
 		gap: 10px;
 	}
@@ -1310,6 +1373,10 @@ const closeNewsDetail = (key: string) => {
 	.event-info .meta {
 		font-size: 0.78rem;
 		color: var(--c-text-muted);
+	}
+
+	.event-info .meta-indicator {
+		color: var(--c-text-secondary);
 	}
 
 	.filter-label {
@@ -1390,7 +1457,7 @@ const closeNewsDetail = (key: string) => {
 	}
 
 	.list-button:focus-visible {
-		outline: 2px solid rgba(255, 255, 255, 0.12);
+		outline: 2px solid var(--c-border-hover);
 		outline-offset: 3px;
 	}
 
@@ -1409,7 +1476,7 @@ const closeNewsDetail = (key: string) => {
 	.detail-back {
 		align-self: flex-start;
 		background: var(--c-bg-900);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		color: var(--c-text-secondary);
 		padding: 6px 12px;
 		border-radius: var(--radius-sm);
@@ -1441,11 +1508,53 @@ const closeNewsDetail = (key: string) => {
 		color: var(--c-text-primary);
 	}
 
+	.detail-titles .meta {
+		font-size: 0.78rem;
+		color: var(--c-text-muted);
+	}
+
+	.detail-titles .meta-indicator {
+		font-size: 0.75rem;
+		color: var(--c-text-secondary);
+	}
+
 	.detail-description {
 		margin: 0;
 		font-size: 0.85rem;
 		color: var(--c-text-secondary);
 		line-height: 1.45;
+	}
+
+	.detail-stats {
+		display: flex;
+		gap: 12px;
+		flex-wrap: wrap;
+		font-size: 0.78rem;
+		color: var(--c-text-secondary);
+	}
+
+	.detail-stats strong {
+		color: var(--c-text-primary);
+		margin-right: 4px;
+	}
+
+	.detail-tags {
+		margin: 0;
+		font-size: 0.76rem;
+		color: var(--c-text-muted);
+	}
+
+	.detail-link {
+		font-size: 0.78rem;
+		color: var(--c-link);
+		text-decoration: none;
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+	}
+
+	.detail-link:hover {
+		text-decoration: underline;
 	}
 
 	.detail-body {
@@ -1563,7 +1672,7 @@ const closeNewsDetail = (key: string) => {
 	}
 
 	:global(*::-webkit-scrollbar-thumb:hover) {
-		background: rgba(255, 255, 255, 0.12);
+		background: var(--c-overlay-strong);
 	}
 
 	:global(*) {

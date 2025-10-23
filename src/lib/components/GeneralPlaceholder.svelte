@@ -18,7 +18,7 @@
 		gap: 12px;
 		padding: 52px;
 		border-radius: var(--radius-lg);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		background: var(--c-bg-800);
 		color: var(--c-text-primary);
 		text-align: center;

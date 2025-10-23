@@ -5,7 +5,7 @@
 	import interactionPlugin from '@fullcalendar/interaction';
 import koLocale from '@fullcalendar/core/locales/ko';
 
-	import { economicEvents } from '$lib/data/economicEvents';
+import { economicEvents, type EconomicEvent } from '$lib/data/economicEvents';
 
 	type CalendarEvent = {
 		id?: string;
@@ -46,28 +46,28 @@ type EventClickArg = {
 	};
 };
 
-	const events: CalendarEvent[] = economicEvents.map((event) => ({
-		id: event.id,
-		title: `${event.time} · ${event.title}`,
-		start: `${event.date}T${event.time}`,
-		url: event.source,
-		allDay: false,
-		extendedProps: {
-			indicator: event.indicator,
-			relatedThemes: event.relatedThemes,
-			country: event.country,
-			filterCategory: event.filterCategory
-		}
-	}));
+const formatCalendarTitle = (event: EconomicEvent) =>
+	`${event.time}${event.timezone ? ` ${event.timezone}` : ''} · ${event.title}`;
 
-	// 디버깅: 첫 번째 이벤트의 filterCategory 확인
-	console.log('Total events loaded:', events.length);
-	console.log('First event filterCategory:', events[0]?.extendedProps?.filterCategory);
-	console.log('Sample events with filterCategory:', events.slice(0, 5).map(e => ({
-		title: e.title,
-		filterCategory: e.extendedProps?.filterCategory
-	})));
-	console.log('All filterCategories in events:', events.map(e => e.extendedProps?.filterCategory).filter(Boolean));
+const events: CalendarEvent[] = economicEvents.map((event) => ({
+	id: event.id,
+	title: formatCalendarTitle(event),
+	start: `${event.date}T${event.time || '00:00'}`,
+	url: event.source,
+	allDay: false,
+	extendedProps: {
+		indicator: event.indicator,
+		relatedThemes: event.relatedThemes,
+		country: event.country,
+		importance: event.importance,
+		flag: event.flag,
+		forecast: event.forecast,
+		previous: event.previous,
+		description: event.description,
+		filterCategory: event.filterCategory,
+		timezone: event.timezone
+	}
+}));
 
 
 	const filterOptions: { id: FilterType; label: string }[] = [
@@ -120,22 +120,10 @@ const transformEvent = (event: CalendarEvent) => {
 	};
 };
 
-	const computeFilteredEvents = () => {
-		console.log('computeFilteredEvents called with activeFilter:', activeFilter);
-		if (activeFilter === 'all') {
-			console.log('Showing all events:', events.length);
-			return events;
-		}
-		const filtered = events.filter((event) => {
-			const matches = event.extendedProps?.filterCategory === activeFilter;
-			if (matches) {
-				console.log('Event matches filter:', event.title, 'filterCategory:', event.extendedProps?.filterCategory);
-			}
-			return matches;
-		});
-		console.log(`Filtered events for ${activeFilter}:`, filtered.length);
-		return filtered;
-	};
+const computeFilteredEvents = () =>
+	activeFilter === 'all'
+		? events
+		: events.filter((event) => event.extendedProps?.filterCategory === activeFilter);
 
 
 $: if (!selectedDate) {
@@ -147,26 +135,16 @@ $: if (!selectedDate) {
 
 const updateCalendarEvents = () => {
 	if (!calendar) return;
-	
-	console.log('updateCalendarEvents called, filteredEvents length:', filteredEvents.length);
 	const nextEvents = filteredEvents.map(transformEvent);
-	console.log('nextEvents length:', nextEvents.length);
-	
-	// 기존 이벤트 제거 후 새 이벤트 추가
 	calendar.removeAllEvents();
 	nextEvents.forEach((eventData) => {
 		calendar.addEvent(eventData);
 	});
-	// rerenderEvents 대신 render 사용
 	calendar.render();
-	console.log('Calendar events updated');
 };
 
 	const initialiseCalendar = () => {
 	if (!calendarEl) return;
-
-	console.log('Initializing calendar with filteredEvents:', filteredEvents.length);
-	console.log('Sample filteredEvents:', filteredEvents.slice(0, 3));
 
 	calendar = new Calendar(calendarEl, {
 		plugins: [dayGridPlugin, interactionPlugin],
@@ -196,9 +174,10 @@ const updateCalendarEvents = () => {
 	calendar.render();
 };
 
-	onMount(() => {
-		initialiseCalendar();
-	});
+onMount(() => {
+	filteredEvents = computeFilteredEvents();
+	initialiseCalendar();
+});
 
 	onDestroy(() => {
 		calendar?.destroy();
@@ -221,21 +200,10 @@ let filteredEvents: CalendarEvent[] = events;
 			class="filter-button"
 			class:active={activeFilter === option.id}
 			on:click={() => {
-				console.log('Filter button clicked:', option.id);
-				activeFilter = option.id;
-				selectedDate = null;
-				console.log('activeFilter changed to:', activeFilter);
-				
-				// 직접 필터링 수행
-				if (option.id === 'all') {
-					filteredEvents = events;
-				} else {
-					filteredEvents = events.filter((event) => event.extendedProps?.filterCategory === option.id);
-				}
-				console.log(`Filtered to ${option.id}:`, filteredEvents.length, 'events');
-				
-				// 캘린더 업데이트
-				updateCalendarEvents();
+		activeFilter = option.id;
+		selectedDate = null;
+		filteredEvents = computeFilteredEvents();
+		updateCalendarEvents();
 			}}
 		>
 					<span>{option.label}</span>
@@ -301,7 +269,7 @@ let filteredEvents: CalendarEvent[] = events;
 		gap: 16px;
 		padding: 24px;
 		border-radius: var(--radius-lg);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		background: var(--c-bg-800);
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 	}
@@ -333,7 +301,7 @@ let filteredEvents: CalendarEvent[] = events;
 		justify-content: center;
 		padding: 8px 16px;
 		border-radius: var(--radius-sm);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		background: var(--c-bg-900);
 		color: var(--c-text-secondary);
 		cursor: pointer;
@@ -344,13 +312,13 @@ let filteredEvents: CalendarEvent[] = events;
 
 	.filter-button:hover {
 		background: var(--c-bg-700);
-		border-color: rgba(255, 255, 255, 0.08);
+		border-color: var(--c-border-soft);
 		color: var(--c-text-primary);
 	}
 
 	.filter-button.active {
 		background: var(--c-bg-700);
-		border-color: rgba(255, 255, 255, 0.12);
+		border-color: var(--c-border-hover);
 		color: var(--c-text-primary);
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 	}
@@ -360,7 +328,7 @@ let filteredEvents: CalendarEvent[] = events;
 		gap: 16px;
 		padding: 20px;
 		border-radius: var(--radius-lg);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		background: var(--c-bg-800);
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 	}
@@ -368,7 +336,7 @@ let filteredEvents: CalendarEvent[] = events;
 	.calendar-container {
 		border-radius: var(--radius-md);
 		background: var(--c-bg-900);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		padding: 12px;
 		overflow: hidden;
 	}
@@ -395,7 +363,7 @@ let filteredEvents: CalendarEvent[] = events;
 
 	.calendar-container :global(.fc .fc-button) {
 		background: var(--c-bg-700);
-		border: 1px solid rgba(255, 255, 255, 0.08);
+		border: 1px solid var(--c-border-soft);
 		color: var(--c-text-primary);
 		border-radius: var(--radius-sm);
 		padding: 6px 12px;
@@ -404,9 +372,9 @@ let filteredEvents: CalendarEvent[] = events;
 
 	.calendar-container :global(.fc .fc-button:hover),
 	.calendar-container :global(.fc .fc-button:focus-visible) {
-		background: rgba(255, 255, 255, 0.08);
+		background: var(--c-surface-hover);
 		color: var(--c-text-primary);
-		border-color: rgba(255, 255, 255, 0.12);
+		border-color: var(--c-border-hover);
 	}
 
 	.calendar-container :global(.fc .fc-daygrid-day-number) {
@@ -433,7 +401,7 @@ let filteredEvents: CalendarEvent[] = events;
 	.selected-events,
 	.empty-events {
 		border-radius: var(--radius-md);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		background: var(--c-bg-900);
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 	}
@@ -443,7 +411,7 @@ let filteredEvents: CalendarEvent[] = events;
 		align-items: baseline;
 		justify-content: space-between;
 		padding: 16px 20px;
-		border-bottom: 1px solid var(--c-bg-700);
+		border-bottom: 1px solid var(--c-border-strong);
 		font-size: 0.8rem;
 		color: var(--c-text-muted);
 	}
@@ -472,7 +440,7 @@ let filteredEvents: CalendarEvent[] = events;
 	}
 
 	.selected-events li + li {
-		border-top: 1px solid var(--c-bg-700);
+		border-top: 1px solid var(--c-border-strong);
 	}
 
 	.event-main {
@@ -508,15 +476,15 @@ let filteredEvents: CalendarEvent[] = events;
 
 	.selected-events a {
 		font-size: 0.75rem;
-		color: rgba(255, 255, 255, 0.85);
+		color: var(--c-link);
 		text-decoration: none;
 		border-bottom: 1px solid transparent;
 		transition: all 0.2s ease;
 	}
 
 	.selected-events a:hover {
-		color: rgba(255, 255, 255, 0.9);
-		border-color: rgba(255, 255, 255, 0.9);
+		color: var(--c-link);
+		border-color: var(--c-link);
 	}
 
 	.empty-events {

@@ -24,9 +24,31 @@
 	const currentTime = formatTime.format(now);
 	const currentDate = formatDate.format(now);
 
-	const upcomingEvents = [...economicEvents]
-		.sort((a, b) => a.date.localeCompare(b.date))
-		.slice(0, 5);
+	const upcomingEventDateFormatter = new Intl.DateTimeFormat('ko-KR', {
+		month: 'numeric',
+		day: 'numeric',
+		weekday: 'short'
+	});
+
+	const toEventDate = (event: (typeof economicEvents)[number]) => {
+		const iso = `${event.date}T${event.time || '00:00'}`;
+		return new Date(iso);
+	};
+
+	const upcomingSource = economicEvents
+		.filter((event) => toEventDate(event) >= now)
+		.sort((a, b) => toEventDate(a).getTime() - toEventDate(b).getTime());
+
+	const fallbackSource = [...economicEvents].sort(
+		(a, b) => toEventDate(a).getTime() - toEventDate(b).getTime()
+	);
+
+	const upcomingEvents = (upcomingSource.length ? upcomingSource : fallbackSource).slice(0, 5);
+
+	const formatUpcomingEventDate = (event: (typeof economicEvents)[number]) =>
+		upcomingEventDateFormatter.format(toEventDate(event));
+	const formatUpcomingEventTime = (event: (typeof economicEvents)[number]) =>
+		event.time + (event.timezone ? ` ${event.timezone}` : '');
 
 	const featuredBoards = communityBoards.slice(0, 4);
 
@@ -137,7 +159,7 @@
 									<span class="event-meta">{event.country} · {event.indicator}</span>
 								</div>
 							</div>
-							<span class="event-date">{event.date}</span>
+							<span class="event-date">{formatUpcomingEventDate(event)} · {formatUpcomingEventTime(event)}</span>
 						</header>
 						<p>{event.description}</p>
 						<footer>
@@ -150,6 +172,8 @@
 							</span>
 							{#if event.forecast}
 								<span class="event-forecast">예상 {event.forecast}</span>
+							{:else if event.previous}
+								<span class="event-forecast">이전 {event.previous}</span>
 							{/if}
 						</footer>
 					</article>
@@ -195,7 +219,7 @@
 		display: grid;
 		gap: 32px;
 		background: var(--c-bg-800);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		border-radius: var(--radius-lg);
 		padding: 32px;
 		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
@@ -251,7 +275,7 @@
 		display: grid;
 		gap: 16px;
 		background: var(--c-bg-900);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		border-radius: var(--radius-md);
 		padding: 20px;
 	}
@@ -279,7 +303,7 @@
 		padding: 12px 16px;
 		border-radius: var(--radius-sm);
 		background: var(--c-bg-700);
-		border: 1px solid rgba(255, 255, 255, 0.12);
+		border: 1px solid var(--c-border-hover);
 	}
 
 	.focus-card.impact-high {
@@ -316,7 +340,7 @@
 		padding: 2px 10px;
 		font-size: 0.75rem;
 		border-radius: 4px;
-		background: rgba(255, 255, 255, 0.12);
+		background: var(--c-overlay-strong);
 		color: var(--c-text-primary);
 		font-weight: 600;
 	}
@@ -361,13 +385,13 @@
 		padding: 18px 20px;
 		border-radius: var(--radius-md);
 		background: var(--c-bg-900);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		transition: all 0.2s ease;
 	}
 
 	.metric-card:hover {
 		transform: translateY(-2px);
-		border-color: rgba(255, 255, 255, 0.12);
+		border-color: var(--c-border-hover);
 		background: var(--c-bg-700);
 	}
 
@@ -422,13 +446,13 @@
 		text-decoration: none;
 		color: inherit;
 		background: var(--c-bg-900);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		transition: all 0.2s ease;
 	}
 
 	.category-card:hover {
 		transform: translateY(-3px);
-		border-color: rgba(255, 255, 255, 0.12);
+		border-color: var(--c-border-hover);
 		background: var(--c-bg-700);
 	}
 
@@ -468,7 +492,7 @@
 		padding: 20px;
 		border-radius: var(--radius-md);
 		background: var(--c-bg-900);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 	}
 
 	.event-card header {
@@ -546,6 +570,11 @@
 		color: rgba(210, 226, 255, 0.9);
 	}
 
+	.event-forecast {
+		font-size: 0.78rem;
+		color: var(--c-text-secondary);
+	}
+
 	.empty-copy {
 		margin: 0;
 		padding: 32px;
@@ -569,13 +598,13 @@
 		padding: 20px;
 		border-radius: var(--radius-md);
 		background: var(--c-bg-900);
-		border: 1px solid var(--c-bg-700);
+		border: 1px solid var(--c-border-strong);
 		transition: all 0.2s ease;
 	}
 
 	.community-card:hover {
 		transform: translateY(-2px);
-		border-color: rgba(255, 255, 255, 0.12);
+		border-color: var(--c-border-hover);
 		background: var(--c-bg-700);
 	}
 
