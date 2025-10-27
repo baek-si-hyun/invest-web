@@ -1,15 +1,17 @@
 <script lang="ts">
 	import ChartWindow from '$lib/components/ChartWindow.svelte';
 	import EconomicCalendar from '$lib/components/EconomicCalendar.svelte';
-	import GeneralDashboard from '$lib/components/GeneralDashboard.svelte';
+	import GeneralAssetMap from '$lib/components/GeneralAssetMap.svelte';
 	import GeneralSNSFeed from '$lib/components/GeneralSNSFeed.svelte';
 	import GeneralNewsFeed from '$lib/components/GeneralNewsFeed.svelte';
 	import { economicEvents as calendarEconomicEvents, type EconomicEvent } from '$lib/data/economicEvents';
 	import GeneralPlaceholder from '$lib/components/GeneralPlaceholder.svelte';
+	import GeneralCommunity from '$lib/components/GeneralCommunity.svelte';
 	import InfoWindow from '$lib/components/InfoWindow.svelte';
 	import { instruments } from '$lib/data/instruments';
 	import { socialPlatforms as snsPlatforms, type SocialPlatform } from '$lib/data/social';
 	import { newsSources, type NewsSource } from '$lib/data/news';
+	import { communityBoards, featuredCommunityPosts } from '$lib/data/community';
 
 	type Section = 'chart' | 'events' | 'sns' | 'news' | 'community';
 	type Mode = 'general' | 'pro';
@@ -22,7 +24,7 @@
 		{ id: 'community', label: '커뮤니티' }
 	];
 
-	const instrumentMap = new Map(instruments.map((instrument) => [instrument.id, instrument] as const));
+const instrumentMap = new Map(instruments.map((instrument) => [instrument.id, instrument] as const));
 
 
 
@@ -32,6 +34,13 @@ type PlatformId = SocialPlatform['id'];
 const allPlatformIds: PlatformId[] = snsPlatforms.map((platform) => platform.id);
 
 	const newsSourceMap = new Map(newsSources.map((source) => [source.id, source] as const));
+	const communityBoardMap = new Map(communityBoards.map((board) => [board.slug, board] as const));
+	const communityBoardsByActivity = [...communityBoards].sort(
+		(a, b) => (b.metrics.postsToday ?? 0) - (a.metrics.postsToday ?? 0)
+	);
+	const communityMenuBoards = communityBoardsByActivity.slice(0, 6);
+	const communityPosts = featuredCommunityPosts;
+	const communityMenuPosts = communityPosts.slice(0, 3);
 
 type WindowBase = {
 	key: string;
@@ -55,7 +64,19 @@ type NewsWindowState = WindowBase & {
 	selectedIndex: number | null;
 };
 
-type WindowState = ChartWindowState | EventsWindowState | SNSWindowState | NewsWindowState;
+type CommunityWindowState = WindowBase & {
+	type: 'community';
+	selectedBoard: string | null;
+	view: 'list' | 'detail';
+	selectedIndex: number | null;
+};
+
+type WindowState =
+	| ChartWindowState
+	| EventsWindowState
+	| SNSWindowState
+	| NewsWindowState
+	| CommunityWindowState;
 
 const eventDateFormatter = new Intl.DateTimeFormat('ko-KR', {
 	month: 'numeric',
@@ -121,6 +142,13 @@ $: if (typeof document !== 'undefined') {
 		} else {
 			activeSection = activeSection ?? 'chart';
 		}
+	};
+
+	const handleLogoClick = () => {
+		setMode('general');
+		generalSection = 'chart';
+		cancelHoverHide();
+		hoveredSection = null;
 	};
 
 	const cancelHoverHide = () => {
@@ -346,6 +374,37 @@ const openSNSWindow = (platformId: PlatformId | 'all') => {
 		bringToFront(key);
 	};
 
+	const openCommunityWindow = (boardSlug: string | 'all' = 'all') => {
+		const key = 'community';
+		const normalized = boardSlug === 'all' ? null : communityBoardMap.has(boardSlug) ? boardSlug : null;
+		const existing = windows.find((window) => window.key === key && window.type === 'community') as
+			| CommunityWindowState
+			| undefined;
+
+		if (!existing) {
+			const position = createWindowPosition();
+			const nextWindow: CommunityWindowState = {
+				key,
+				type: 'community',
+				position,
+				size: { width: 420, height: 360 },
+				z: ++zCounter,
+				selectedBoard: normalized,
+				view: 'list',
+				selectedIndex: null
+			};
+
+			windows = [...windows, nextWindow];
+			return;
+		}
+
+		updateWindowState(key, (window) => {
+			if (window.type !== 'community') return window;
+			return { ...window, selectedBoard: normalized, view: 'list', selectedIndex: null };
+		});
+		bringToFront(key);
+	};
+
 	const isInstrumentActive = (instrumentId: string) =>
 		windows.some((window) => window.type === 'chart' && window.instrumentId === instrumentId);
 
@@ -365,6 +424,14 @@ const openSNSWindow = (platformId: PlatformId | 'all') => {
 			return window.sources.length === newsSources.length;
 		}
 		return window.sources.includes(sourceId);
+	};
+	const isCommunityActive = (boardSlug: string | 'all') => {
+		const window = windows.find((entry) => entry.type === 'community') as CommunityWindowState | undefined;
+		if (!window) return false;
+		if (boardSlug === 'all') {
+			return window.selectedBoard === null;
+		}
+		return window.selectedBoard === boardSlug;
 	};
 
 	const selectInstrument = (instrumentId: string) => {
@@ -390,6 +457,13 @@ const openNewsFromMenu = (sourceId: string) => {
 		hoveredSection = null;
 	}
 };
+
+	const openCommunityFromMenu = (boardSlug: string | 'all') => {
+		openCommunityWindow(boardSlug);
+		if (mode === 'pro') {
+			hoveredSection = null;
+		}
+	};
 
 type SNSListItem = SocialPlatform['posts'][number] & {
 	platformId: PlatformId;
@@ -434,6 +508,14 @@ const getNewsItems = (sourceIds: string[]) => {
 	return items;
 };
 
+type CommunityListItem = (typeof communityPosts)[number];
+
+const getCommunityItems = (boardSlug: string | null) => {
+	if (!boardSlug) return communityPosts;
+	return communityPosts.filter((post) => post.boardSlug === boardSlug);
+};
+
+
 const openEventDetail = (key: string, index: number) => {
 	updateWindowState(key, (window) => {
 		if (window.type !== 'events') return window;
@@ -476,14 +558,35 @@ const closeNewsDetail = (key: string) => {
 	});
 };
 
+const openCommunityDetail = (key: string, index: number) => {
+	updateWindowState(key, (window) => {
+		if (window.type !== 'community') return window;
+		return { ...window, view: 'detail', selectedIndex: index };
+	});
+};
+
+const closeCommunityDetail = (key: string) => {
+	updateWindowState(key, (window) => {
+		if (window.type !== 'community') return window;
+		return { ...window, view: 'list', selectedIndex: null };
+	});
+};
+
+const setCommunityFilter = (key: string, boardSlug: string | null) => {
+	updateWindowState(key, (window) => {
+		if (window.type !== 'community') return window;
+		return { ...window, selectedBoard: boardSlug, view: 'list', selectedIndex: null };
+	});
+};
+
 </script>
 
 <div class="layout">
 	<nav class="top-nav" bind:clientHeight={navHeight} on:pointerenter={cancelHoverHide} on:pointerleave={scheduleHoverHide}>
-		<div class="brand">
+		<button type="button" class="brand" on:click={handleLogoClick}>
 			<span class="brand__logo">INVEST</span>
 			<span class="brand__mode">{mode === 'pro' ? 'PRO' : 'BASIC'} HTS</span>
-		</div>
+		</button>
 
 		<ul class="menu" role="tablist">
 			{#each sections as section}
@@ -497,7 +600,7 @@ const closeNewsDetail = (key: string) => {
 						on:focus={() => handleNavPointerEnter(section.id)}
 						aria-selected={mode === 'pro' ? activeSection === section.id : generalSection === section.id}
 					>
-						{section.label}
+						{section.id === 'chart' && mode === 'general' ? '자산군' : section.label}
 					</button>
 				</li>
 			{/each}
@@ -635,11 +738,53 @@ const closeNewsDetail = (key: string) => {
 				{:else}
 					<header class="menu-modal__header">
 						<h3>커뮤니티</h3>
-						<p>트레이더 커뮤니티 기능은 준비 중입니다.</p>
+						<p>보드별 실시간 토론과 트렌드를 창으로 띄워보세요.</p>
 					</header>
-					<div class="modal-placeholder">
-						<p>곧 커뮤니티 기능을 만나보실 수 있어요.</p>
+					<div class="community-menu">
+						<div class="community-menu__boards">
+							{#each communityMenuBoards as board}
+								<button
+									type="button"
+									class="community-board-card"
+									class:active={isCommunityActive(board.slug)}
+									on:click={() => openCommunityFromMenu(board.slug)}
+								>
+									<div class="community-board-card__title">
+										<span aria-hidden="true">{board.emoji}</span>
+										<strong>{board.title}</strong>
+									</div>
+									<p>{board.description}</p>
+									<span class="community-board-card__meta">오늘 {board.metrics.postsToday}건</span>
+								</button>
+							{/each}
+						</div>
+						<div class="community-menu__posts">
+							{#each communityMenuPosts as post}
+								{@const board = communityBoardMap.get(post.boardSlug)}
+								<button
+									type="button"
+									class="community-post-card"
+									on:click={() => openCommunityFromMenu(board?.slug ?? 'all')}
+								>
+									<div>
+										<p class="community-post-card__board">{board?.emoji} {board?.title}</p>
+										<strong>{post.title}</strong>
+										<span class="community-post-card__meta">{post.author} · {post.postedAt}</span>
+									</div>
+									<p class="community-post-card__summary">{post.summary}</p>
+								</button>
+							{/each}
+						</div>
 					</div>
+					<button
+						type="button"
+						class="modal-action"
+						class:disabled={isCommunityActive('all')}
+						on:click={() => openCommunityFromMenu('all')}
+						disabled={isCommunityActive('all')}
+					>
+						{isCommunityActive('all') ? '커뮤니티 창이 열려 있습니다' : '전체 커뮤니티 피드 열기'}
+					</button>
 				{/if}
 			</section>
 		</div>
@@ -648,13 +793,15 @@ const closeNewsDetail = (key: string) => {
 	{#if mode === 'general'}
 		<main class="general-container" style={`padding-top: ${navHeight + 32}px;`}>
 			{#if generalSection === 'chart'}
-				<GeneralDashboard />
+				<GeneralAssetMap />
 			{:else if generalSection === 'events'}
 				<EconomicCalendar />
 			{:else if generalSection === 'sns'}
 				<GeneralSNSFeed />
 			{:else if generalSection === 'news'}
 				<GeneralNewsFeed />
+			{:else if generalSection === 'community'}
+				<GeneralCommunity />
 			{:else}
 				<GeneralPlaceholder
 					title="커뮤니티 라운지"
@@ -917,6 +1064,99 @@ const closeNewsDetail = (key: string) => {
 								</ol>
 							{/if}
 					</InfoWindow>
+			{:else if window.type === 'community'}
+				{@const boardFilter = window.selectedBoard}
+				{@const filterBoard = boardFilter ? communityBoardMap.get(boardFilter) : null}
+				{@const filterLabel = filterBoard ? filterBoard.title : '전체'}
+				{@const posts = getCommunityItems(boardFilter)}
+				<InfoWindow
+					title={`커뮤니티 — ${filterLabel}`}
+					subtitle={boardFilter
+						? `${filterLabel} 실시간 토론`
+						: '전체 커뮤니티 하이라이트'}
+					position={window.position}
+					size={window.size}
+					zIndex={window.z}
+					lockedTop={navHeight}
+					minWidth={360}
+					minHeight={300}
+					on:move={(event) => handleMove(window.key, event.detail)}
+					on:resize={(event) => handleResize(window.key, event.detail)}
+					on:focus={() => bringToFront(window.key)}
+					on:close={() => closeWindow(window.key)}
+				>
+					{#if window.view === 'detail' && window.selectedIndex !== null}
+						{@const post = posts[window.selectedIndex]}
+						<div class="detail-view">
+							<button type="button" class="detail-back" on:click={() => closeCommunityDetail(window.key)}>
+								← 뒤로가기
+							</button>
+							{#if post}
+								<div class="detail-header">
+									<h4>{post.title}</h4>
+									<span class="meta">{post.author} · {post.postedAt}</span>
+								</div>
+								<p class="detail-description">{post.summary}</p>
+								<div class="community-detail__stats">
+									<span>좋아요 {post.likes}</span>
+									<span>댓글 {post.comments}</span>
+								</div>
+								{#if post.tags.length}
+									<div class="community-detail__tags">
+										{#each post.tags as tag}
+											<span>{tag}</span>
+										{/each}
+									</div>
+								{/if}
+							{:else}
+								<p class="detail-description">선택한 게시글 정보를 불러오지 못했습니다.</p>
+							{/if}
+						</div>
+					{:else}
+						<div class="community-window__filters">
+							<button
+								type="button"
+								class:active={!boardFilter}
+								on:click={() => setCommunityFilter(window.key, null)}
+							>
+								전체
+							</button>
+							{#each communityBoardsByActivity.slice(0, 6) as board}
+								<button
+									type="button"
+									class:active={board.slug === boardFilter}
+									on:click={() => setCommunityFilter(window.key, board.slug)}
+								>
+									{board.emoji} {board.title}
+									<span>오늘 {board.metrics.postsToday}건</span>
+								</button>
+							{/each}
+						</div>
+						{#if posts.length === 0}
+							<p class="empty-state">선택한 보드에 게시글이 없습니다.</p>
+						{:else}
+							<ul class="window-list window-list--community">
+								{#each posts as post, index}
+									<li>
+										<button type="button" class="list-button community-button" on:click={() => openCommunityDetail(window.key, index)}>
+											<div class="community-button__header">
+												<span>{communityBoardMap.get(post.boardSlug)?.title ?? '커뮤니티'}</span>
+											</div>
+											<strong>{post.title}</strong>
+											<p class="list-description">{post.summary}</p>
+											<div class="community-button__meta">
+												<span>{post.author}</span>
+												<span>{post.postedAt}</span>
+												<span>👍 {post.likes}</span>
+												<span>💬 {post.comments}</span>
+											</div>
+										</button>
+									</li>
+								{/each}
+							</ul>
+						{/if}
+					{/if}
+				</InfoWindow>
 			{/if}
 		{/each}
 		</main>
@@ -957,6 +1197,13 @@ const closeNewsDetail = (key: string) => {
 		gap: 10px;
 		font-weight: 600;
 		letter-spacing: 0.04em;
+		background: transparent;
+		border: none;
+		color: inherit;
+		padding: 0;
+		cursor: pointer;
+		text-decoration: none;
+		transition: transform 0.2s ease;
 	}
 
 	.brand__logo {
@@ -974,6 +1221,14 @@ const closeNewsDetail = (key: string) => {
 	.brand__mode {
 		color: var(--c-text-muted);
 		font-size: 0.8rem;
+	}
+
+	.brand:hover .brand__logo {
+		background: var(--c-bg-700);
+	}
+
+	.brand:hover {
+		transform: translateY(-1px);
 	}
 
 	.menu {
@@ -1096,6 +1351,67 @@ const closeNewsDetail = (key: string) => {
 		margin: 0;
 		color: var(--c-text-muted);
 		font-size: 0.82rem;
+	}
+
+	.community-menu {
+		display: grid;
+		grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+		gap: 16px;
+	}
+
+	.community-menu__boards {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+		gap: 12px;
+	}
+
+	.community-board-card,
+	.community-post-card {
+		border: 1px solid var(--c-border);
+		border-radius: var(--radius-md);
+		background: var(--c-bg-900);
+		padding: 14px;
+		text-align: left;
+		color: inherit;
+		cursor: pointer;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		font-size: 0.9rem;
+		transition: border-color 0.2s ease, background 0.2s ease;
+	}
+
+	.community-board-card.active,
+	.community-board-card:hover,
+	.community-post-card:hover {
+		border-color: var(--c-border-hover);
+		background: var(--c-bg-800);
+	}
+
+	.community-board-card__title {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-weight: 600;
+	}
+
+	.community-board-card__meta,
+	.community-post-card__meta {
+		font-size: 0.78rem;
+		color: var(--c-text-muted);
+	}
+
+	.community-post-card__board {
+		margin: 0;
+		font-size: 0.82rem;
+		color: var(--c-text-muted);
+	}
+
+	.community-post-card__summary {
+		margin: 4px 0 0;
+		font-size: 0.85rem;
+		color: var(--c-text-secondary);
+		line-height: 1.4;
 	}
 
 	.general-container {
@@ -1307,20 +1623,6 @@ const closeNewsDetail = (key: string) => {
 		color: var(--c-text-muted);
 	}
 
-	.modal-placeholder {
-		padding: 28px;
-		border-radius: var(--radius-md);
-		background: var(--c-bg-900);
-		border: 1px dashed var(--c-bg-700);
-		text-align: center;
-		color: var(--c-text-muted);
-		font-size: 0.88rem;
-	}
-
-	.modal-placeholder p {
-		margin: 0;
-	}
-
 	.window-list {
 		list-style: none;
 		margin: 0;
@@ -1408,6 +1710,69 @@ const closeNewsDetail = (key: string) => {
 		display: flex;
 		align-items: flex-start;
 		gap: 12px;
+	}
+
+	.window-list--community li {
+		padding: 0;
+		border: none;
+		background: transparent;
+	}
+
+	.community-button {
+		width: 100%;
+		text-align: left;
+		background: var(--c-bg-900);
+		border: 1px solid var(--c-border-strong);
+		border-radius: var(--radius-md);
+		padding: 14px 16px;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		color: inherit;
+		cursor: pointer;
+	}
+
+	.community-button__header {
+		display: flex;
+		font-size: 0.8rem;
+		color: var(--c-text-muted);
+	}
+
+	.community-button__meta {
+		display: flex;
+		gap: 10px;
+		flex-wrap: wrap;
+		font-size: 0.76rem;
+		color: var(--c-text-muted);
+	}
+
+	.community-window__filters {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-bottom: 14px;
+	}
+
+	.community-window__filters button {
+		border: 1px solid var(--c-border);
+		background: var(--c-bg-900);
+		color: var(--c-text-secondary);
+		border-radius: 999px;
+		padding: 6px 12px;
+		font-size: 0.78rem;
+		cursor: pointer;
+	}
+
+	.community-window__filters button span {
+		margin-left: 6px;
+		color: var(--c-text-muted);
+		font-weight: 500;
+	}
+
+	.community-window__filters button.active,
+	.community-window__filters button:hover {
+		border-color: var(--c-border-hover);
+		color: var(--c-text-primary);
 	}
 
 	.news-index {
@@ -1557,6 +1922,29 @@ const closeNewsDetail = (key: string) => {
 		text-decoration: underline;
 	}
 
+	.community-detail__stats {
+		margin: 12px 0;
+		display: flex;
+		gap: 12px;
+		flex-wrap: wrap;
+		font-size: 0.8rem;
+		color: var(--c-text-secondary);
+	}
+
+	.community-detail__tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.community-detail__tags span {
+		padding: 4px 10px;
+		border-radius: 999px;
+		border: 1px solid var(--c-border);
+		background: var(--c-bg-900);
+		font-size: 0.75rem;
+	}
+
 	.detail-body {
 		margin: 0;
 		font-size: 0.86rem;
@@ -1703,6 +2091,14 @@ const closeNewsDetail = (key: string) => {
 
 		.menu-modal__panel {
 			padding: 22px;
+		}
+
+		.community-menu {
+			grid-template-columns: 1fr;
+		}
+
+		.community-menu__boards {
+			grid-template-columns: 1fr;
 		}
 	}
 </style>

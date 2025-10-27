@@ -185,3 +185,143 @@ export const journalTemplates: JournalTemplate[] = [
     exampleTags: ["#주간리포트", "#거시분석"],
   },
 ];
+
+export type CommunityPulseMetric = {
+  id: string;
+  label: string;
+  value: string;
+  delta: string;
+  trend: "up" | "down";
+  description: string;
+};
+
+export type CommunityPost = {
+  id: string;
+  boardSlug: string;
+  title: string;
+  summary: string;
+  author: string;
+  postedAt: string;
+  likes: number;
+  comments: number;
+  sentiment: "bullish" | "bearish" | "neutral";
+  tags: string[];
+};
+
+export type CommunityTagStat = {
+  label: string;
+  usage: number;
+  change: string;
+};
+
+export const communityPulseMetrics: CommunityPulseMetric[] = [
+  {
+    id: "active-users",
+    label: "실시간 참여자",
+    value: "4,892",
+    delta: "+12.4%",
+    trend: "up",
+    description: "최근 30분 기준",
+  },
+  {
+    id: "new-topics",
+    label: "신규 토픽",
+    value: "38",
+    delta: "+5.2%",
+    trend: "up",
+    description: "오늘 등록",
+  },
+  {
+    id: "insight-ratio",
+    label: "인사이트 비율",
+    value: "63%",
+    delta: "-2.1%",
+    trend: "down",
+    description: "추천 20개 이상 게시글",
+  },
+  {
+    id: "journal-updates",
+    label: "매매 일지",
+    value: "126",
+    delta: "+8.0%",
+    trend: "up",
+    description: "이번 주 업데이트",
+  },
+];
+
+export const featuredCommunityPosts: CommunityPost[] = [
+  {
+    id: "c-post-1",
+    boardSlug: "coin",
+    title: "온체인 유동성 이동 — 알트 시즌 신호?",
+    summary:
+      "주요 거래소 간 스테이블 유입량을 추적해 보니 4월 이후 가장 큰 규모가 관측됩니다. 레이어2 가스비도 다시 올라가는 중.",
+    author: "Operator_J",
+    postedAt: "2시간 전",
+    likes: 142,
+    comments: 37,
+    sentiment: "bullish",
+    tags: ["#온체인", "#레이어2"],
+  },
+  {
+    id: "c-post-2",
+    boardSlug: "kr-stock",
+    title: "2차전지 재료단 원가 압박 완화",
+    summary:
+      "탄산리튬 톤당 1만5천달러선에서 박스권. 양극재 업체별 스프레드가 벌어지기 시작했습니다. 3분기 마진 회복 베팅 관점 공유합니다.",
+    author: "에쿼티리서치",
+    postedAt: "4시간 전",
+    likes: 96,
+    comments: 22,
+    sentiment: "bullish",
+    tags: ["#2차전지", "#마진"],
+  },
+  {
+    id: "c-post-3",
+    boardSlug: "usd",
+    title: "7월 FOMC 전 달러 롱 포지션 압축",
+    summary:
+      "IMM 포지셔닝 기준 달러 순매수 잔량이 5주 연속 축소되었습니다. 105선 언저리에서 숏 커버 가능성 체크하세요.",
+    author: "MacroNotes",
+    postedAt: "6시간 전",
+    likes: 68,
+    comments: 18,
+    sentiment: "neutral",
+    tags: ["#달러", "#FOMC"],
+  },
+  {
+    id: "c-post-4",
+    boardSlug: "defi",
+    title: "리퀴드 리스택킹 풀 간 APR 비교표",
+    summary:
+      "EigenLayer 재스태킹 풀뿐 아니라 Karak·Symbiotic까지 비교표로 정리했습니다. 슬래싱 리스크도 간단히 메모했습니다.",
+    author: "DeFi_Diary",
+    postedAt: "1일 전",
+    likes: 83,
+    comments: 11,
+    sentiment: "bullish",
+    tags: ["#리스택킹", "#APR"],
+  },
+  {
+    id: "c-post-5",
+    boardSlug: "auction",
+    title: "서울 서북권 낙찰가율 2%p 하락",
+    summary:
+      "최근 4주 이동평균 기준 낙찰가율이 94%까지 내려왔습니다. 물건 수가 늘어난 만큼 입찰가 전략 조정이 필요해 보여요.",
+    author: "현장러너",
+    postedAt: "1일 전",
+    likes: 41,
+    comments: 9,
+    sentiment: "bearish",
+    tags: ["#경매", "#낙찰가율"],
+  },
+];
+
+export const trendingCommunityTags: CommunityTagStat[] = [
+  { label: "ETF리밸런싱", usage: 128, change: "+34%" },
+  { label: "AI반도체", usage: 203, change: "+12%" },
+  { label: "거시브리핑", usage: 176, change: "+19%" },
+  { label: "에어드롭", usage: 149, change: "+8%" },
+  { label: "리스크관리", usage: 117, change: "+5%" },
+  { label: "주간플랜", usage: 96, change: "+14%" },
+];
