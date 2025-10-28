@@ -59,9 +59,9 @@ let initialZoom: number | null = null;
 				change,
 				upperLabel: {
 					backgroundColor: getColor(change),
-					color: '#f8fafc',
+					color: 'var(--c-text-primary)',
 					textShadowBlur: 8,
-					textShadowColor: 'rgba(15,23,42,0.55)',
+					textShadowColor: 'var(--c-overlay-strong)',
 					padding: [0, 6, 0, 6],
 					fontSize: 9,
 					fontWeight: 500
@@ -412,9 +412,9 @@ const updateChart = () => {
 				formatter: labelFormatter,
 				fontSize: 12,
 				fontWeight: 600,
-				color: '#f8fafc',
+				color: 'var(--c-text-primary)',
 				textShadowBlur: 8,
-				textShadowColor: 'rgba(15,23,42,0.55)',
+				textShadowColor: 'var(--c-overlay-strong)',
 				minFontSize: 8,
 				maxFontSize: 32,
 				overflow: 'truncate'
@@ -426,13 +426,13 @@ const updateChart = () => {
 					const name = params?.data?.name;
 					return name && name !== 'undefined' ? name : '';
 				},
-				color: '#f8fafc',
+				color: 'var(--c-text-primary)',
 				fontSize: 9,
 				fontWeight: 500,
 				textShadowBlur: 8,
-				textShadowColor: 'rgba(15,23,42,0.55)',
+				textShadowColor: 'var(--c-overlay-strong)',
 				padding: [0, 6, 0, 6],
-				backgroundColor: 'rgba(15, 23, 42, 0.1)'
+				backgroundColor: 'var(--c-bg-700)'
 			},
 			levels: [
 				{
@@ -457,11 +457,11 @@ const updateChart = () => {
 			],
 			emphasis: {
 				itemStyle: {
-					borderColor: 'rgba(15, 23, 42, 0.3)',
+					borderColor: 'var(--c-border-soft)',
 					borderWidth: 2,
 					borderRadius: 0,
 					shadowBlur: 12,
-					shadowColor: 'rgba(15, 23, 42, 0.25)'
+					shadowColor: 'var(--c-overlay-soft)'
 				}
 			},
 			data: seriesData
@@ -474,9 +474,9 @@ const updateChart = () => {
 				formatter: (info: any) => formatTooltip(info.data),
 					borderRadius: 12,
 					padding: 12,
-					backgroundColor: 'rgba(15, 23, 42, 0.92)',
+					backgroundColor: 'var(--c-bg-800)',
 					textStyle: {
-						color: '#f8fafc',
+						color: 'var(--c-text-primary)',
 						fontSize: 12
 					}
 				},
@@ -571,7 +571,7 @@ const updateChart = () => {
 		height: 100%;
 		min-height: 320px;
 		overflow: hidden;
-		background: var(--map-surface, #f8fafc);
+		background: var(--c-bg-800);
 		position: relative;
 		display: block;
 		box-sizing: border-box;
@@ -585,7 +585,7 @@ const updateChart = () => {
 		align-items: center;
 		justify-content: center;
 		gap: 0.5rem;
-		color: rgba(15, 23, 42, 0.6);
+		color: var(--c-text-muted);
 		font-size: 0.9rem;
 	}
 
@@ -623,5 +623,228 @@ const updateChart = () => {
 		text-anchor: middle !important;
 		dominant-baseline: middle !important;
 		transform: translate(-50%, -50%) !important;
+	}
+
+	/* 반응형 브레이크포인트 */
+	/* Large Desktop: 1440px+ */
+	@media (min-width: 1440px) {
+		.asset-map {
+			padding: 3rem;
+		}
+		
+		.asset-map__header h1 {
+			font-size: 2.1rem;
+		}
+		
+		.asset-map__header p {
+			font-size: 1rem;
+		}
+		
+		.pill {
+			padding: 1rem 1.4rem;
+			font-size: 1rem;
+			min-width: 200px;
+		}
+		
+		.asset-map__chart {
+			min-height: 400px;
+		}
+	}
+
+	/* Desktop: 1200px - 1439px */
+	@media (max-width: 1439px) and (min-width: 1200px) {
+		.asset-map {
+			padding: 2.5rem;
+		}
+		
+		.asset-map__header h1 {
+			font-size: 1.9rem;
+		}
+		
+		.asset-map__header p {
+			font-size: 0.95rem;
+		}
+		
+		.pill {
+			padding: 0.9rem 1.2rem;
+			font-size: 0.95rem;
+			min-width: 180px;
+		}
+		
+		.asset-map__chart {
+			min-height: 360px;
+		}
+	}
+
+	/* Tablet Landscape: 1024px - 1199px */
+	@media (max-width: 1199px) and (min-width: 1024px) {
+		.asset-map {
+			padding: 2rem;
+		}
+		
+		.asset-map__header h1 {
+			font-size: 1.7rem;
+		}
+		
+		.asset-map__header p {
+			font-size: 0.9rem;
+		}
+		
+		.pill {
+			padding: 0.8rem 1rem;
+			font-size: 0.9rem;
+			min-width: 160px;
+		}
+		
+		.asset-map__chart {
+			min-height: 320px;
+		}
+	}
+
+	/* Tablet Portrait: 768px - 1023px */
+	@media (max-width: 1023px) and (min-width: 768px) {
+		.asset-map {
+			padding: 1.5rem;
+		}
+		
+		.asset-map__header h1 {
+			font-size: 1.5rem;
+		}
+		
+		.asset-map__header p {
+			font-size: 0.85rem;
+		}
+		
+		.pill-group {
+			gap: 0.5rem;
+		}
+		
+		.pill {
+			padding: 0.7rem 0.9rem;
+			font-size: 0.85rem;
+			min-width: 140px;
+		}
+		
+		.asset-map__chart {
+			min-height: 280px;
+		}
+		
+		.asset-map__meta {
+			padding: 0.8rem 1.2rem;
+		}
+	}
+
+	/* Mobile Landscape: 640px - 767px */
+	@media (max-width: 767px) and (min-width: 640px) {
+		.asset-map {
+			padding: 1.2rem;
+		}
+		
+		.asset-map__header h1 {
+			font-size: 1.3rem;
+		}
+		
+		.asset-map__header p {
+			font-size: 0.8rem;
+		}
+		
+		.pill-group {
+			gap: 0.4rem;
+		}
+		
+		.pill {
+			padding: 0.6rem 0.8rem;
+			font-size: 0.8rem;
+			min-width: 120px;
+		}
+		
+		.asset-map__chart {
+			min-height: 240px;
+		}
+		
+		.asset-map__meta {
+			padding: 0.6rem 1rem;
+		}
+	}
+
+	/* Mobile Portrait: 480px - 639px */
+	@media (max-width: 639px) and (min-width: 480px) {
+		.asset-map {
+			padding: 1rem;
+		}
+		
+		.asset-map__header h1 {
+			font-size: 1.1rem;
+		}
+		
+		.asset-map__header p {
+			font-size: 0.75rem;
+		}
+		
+		.pill-group {
+			gap: 0.3rem;
+		}
+		
+		.pill {
+			padding: 0.5rem 0.7rem;
+			font-size: 0.75rem;
+			min-width: 100px;
+		}
+		
+		.asset-map__chart {
+			min-height: 200px;
+		}
+		
+		.asset-map__meta {
+			padding: 0.5rem 0.8rem;
+		}
+	}
+
+	/* Small Mobile: 320px - 479px */
+	@media (max-width: 479px) {
+		.asset-map {
+			padding: 0.8rem;
+		}
+		
+		.asset-map__header h1 {
+			font-size: 1rem;
+		}
+		
+		.asset-map__header p {
+			font-size: 0.7rem;
+		}
+		
+		.pill-group {
+			gap: 0.25rem;
+		}
+		
+		.pill {
+			padding: 0.4rem 0.6rem;
+			font-size: 0.7rem;
+			min-width: 80px;
+		}
+		
+		.asset-map__chart {
+			min-height: 180px;
+		}
+		
+		.asset-map__meta {
+			padding: 0.4rem 0.6rem;
+		}
+	}
+
+	/* 터치 디바이스 최적화 */
+	@media (hover: none) and (pointer: coarse) {
+		.pill {
+			min-height: 44px;
+			min-width: 44px;
+		}
+	}
+
+	/* 고해상도 디스플레이 */
+	@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+		.asset-map {
+			font-weight: 500;
+		}
 	}
 </style>

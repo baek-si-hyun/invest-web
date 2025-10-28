@@ -277,7 +277,7 @@
   }
 
   .tag-panel li span {
-    color: #4ade80;
+    color: var(--c-link);
     font-weight: 600;
     font-size: 0.86rem;
   }
@@ -288,9 +288,384 @@
     color: var(--c-text-muted);
   }
 
-  @media (max-width: 1080px) {
+  /* 반응형 브레이크포인트 */
+  /* Large Desktop: 1440px+ */
+  @media (min-width: 1440px) {
+    .community-general {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .feed {
+      padding: 32px;
+    }
+    
+    .section-header h3 {
+      font-size: 1.5rem;
+    }
+    
+    .board-stack,
+    .tag-panel {
+      padding: 28px;
+    }
+  }
+
+  /* Desktop: 1200px - 1439px */
+  @media (max-width: 1439px) and (min-width: 1200px) {
+    .community-general {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .feed {
+      padding: 28px;
+    }
+    
+    .board-stack,
+    .tag-panel {
+      padding: 24px;
+    }
+  }
+
+  /* Tablet Landscape: 1024px - 1199px */
+  @media (max-width: 1199px) and (min-width: 1024px) {
+    .community-general {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .community-body {
+      grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr);
+      gap: 20px;
+    }
+    
+    .feed {
+      padding: 24px;
+    }
+    
+    .board-stack,
+    .tag-panel {
+      padding: 20px;
+    }
+  }
+
+  /* Tablet Portrait: 768px - 1023px */
+  @media (max-width: 1023px) and (min-width: 768px) {
     .community-body {
       grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    
+    .feed {
+      padding: 20px;
+    }
+    
+    .section-header h3 {
+      font-size: 1.2rem;
+    }
+    
+    .board-stack,
+    .tag-panel {
+      padding: 18px;
+    }
+    
+    .board-grid {
+      gap: 12px;
+    }
+    
+    .board-grid article {
+      padding: 12px;
+    }
+  }
+
+  /* Mobile Landscape: 640px - 767px */
+  @media (max-width: 767px) and (min-width: 640px) {
+    .community-general {
+      gap: 20px;
+    }
+    
+    .community-body {
+      gap: 18px;
+    }
+    
+    .feed {
+      padding: 18px;
+      border-radius: 16px;
+    }
+    
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    
+    .section-header h3 {
+      font-size: 1.1rem;
+    }
+    
+    .ghost-button {
+      align-self: flex-start;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+    }
+    
+    .feed-card {
+      padding: 16px;
+    }
+    
+    .feed-card h4 {
+      font-size: 1rem;
+    }
+    
+    .feed-card p {
+      font-size: 0.85rem;
+    }
+    
+    .board-stack,
+    .tag-panel {
+      padding: 16px;
+      border-radius: 16px;
+    }
+    
+    .board-grid article {
+      padding: 10px;
+    }
+    
+    .tag-panel li {
+      padding: 10px;
+    }
+  }
+
+  /* Mobile Portrait: 480px - 639px */
+  @media (max-width: 639px) and (min-width: 480px) {
+    .community-general {
+      gap: 16px;
+    }
+    
+    .community-body {
+      gap: 16px;
+    }
+    
+    .feed {
+      padding: 16px;
+      border-radius: 12px;
+    }
+    
+    .section-header h3 {
+      font-size: 1rem;
+    }
+    
+    .section-eyebrow {
+      font-size: 0.75rem;
+    }
+    
+    .ghost-button {
+      padding: 5px 10px;
+      font-size: 0.75rem;
+    }
+    
+    .feed-card {
+      padding: 14px;
+      border-radius: 12px;
+    }
+    
+    .feed-card h4 {
+      font-size: 0.95rem;
+    }
+    
+    .feed-card p {
+      font-size: 0.8rem;
+    }
+    
+    .feed-card__footer {
+      font-size: 0.75rem;
+      gap: 8px;
+    }
+    
+    .feed-card__tags span {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+    }
+    
+    .board-stack,
+    .tag-panel {
+      padding: 14px;
+      border-radius: 12px;
+    }
+    
+    .board-grid article {
+      padding: 8px;
+      border-radius: 12px;
+    }
+    
+    .board-grid strong {
+      font-size: 0.9rem;
+    }
+    
+    .board-grid p {
+      font-size: 0.8rem;
+    }
+    
+    .tag-panel li {
+      padding: 8px;
+      border-radius: 10px;
+    }
+    
+    .tag-panel li div {
+      font-size: 0.85rem;
+    }
+    
+    .tag-panel li span {
+      font-size: 0.8rem;
+    }
+    
+    .tag-panel li p {
+      font-size: 0.75rem;
+    }
+  }
+
+  /* Small Mobile: 320px - 479px */
+  @media (max-width: 479px) {
+    .community-general {
+      gap: 12px;
+    }
+    
+    .community-body {
+      gap: 12px;
+    }
+    
+    .feed {
+      padding: 12px;
+      border-radius: 8px;
+    }
+    
+    .section-header h3 {
+      font-size: 0.9rem;
+    }
+    
+    .section-eyebrow {
+      font-size: 0.7rem;
+    }
+    
+    .ghost-button {
+      padding: 4px 8px;
+      font-size: 0.7rem;
+    }
+    
+    .feed-card {
+      padding: 12px;
+      border-radius: 8px;
+    }
+    
+    .feed-card h4 {
+      font-size: 0.9rem;
+    }
+    
+    .feed-card p {
+      font-size: 0.75rem;
+    }
+    
+    .feed-card__footer {
+      font-size: 0.7rem;
+      gap: 6px;
+    }
+    
+    .feed-card__tags {
+      gap: 6px;
+    }
+    
+    .feed-card__tags span {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+    }
+    
+    .board-stack,
+    .tag-panel {
+      padding: 12px;
+      border-radius: 8px;
+    }
+    
+    .board-grid {
+      gap: 8px;
+    }
+    
+    .board-grid article {
+      padding: 6px;
+      border-radius: 8px;
+    }
+    
+    .board-grid__emoji {
+      font-size: 1.2rem;
+    }
+    
+    .board-grid strong {
+      font-size: 0.85rem;
+    }
+    
+    .board-grid p {
+      font-size: 0.75rem;
+    }
+    
+    .board-grid__stat {
+      font-size: 0.7rem;
+    }
+    
+    .tag-panel ul {
+      gap: 8px;
+    }
+    
+    .tag-panel li {
+      padding: 6px;
+      border-radius: 6px;
+    }
+    
+    .tag-panel li div {
+      font-size: 0.8rem;
+    }
+    
+    .tag-panel li span {
+      font-size: 0.75rem;
+    }
+    
+    .tag-panel li p {
+      font-size: 0.7rem;
+    }
+  }
+
+  /* 터치 디바이스 최적화 */
+  @media (hover: none) and (pointer: coarse) {
+    .ghost-button {
+      min-height: 44px;
+    }
+    
+    .feed-card {
+      min-height: 44px;
+    }
+    
+    .board-grid article {
+      min-height: 44px;
+    }
+    
+    .tag-panel li {
+      min-height: 44px;
+    }
+  }
+
+  /* 고해상도 디스플레이 */
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .section-header h3 {
+      font-weight: 700;
+    }
+    
+    .feed-card h4 {
+      font-weight: 700;
+    }
+  }
+
+  /* 다크 모드 최적화 */
+  @media (prefers-color-scheme: dark) {
+    .community-general {
+      background: var(--c-bg-900);
     }
   }
 </style>

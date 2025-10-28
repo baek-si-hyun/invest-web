@@ -222,7 +222,7 @@
 		border: 1px solid var(--c-border-strong);
 		border-radius: var(--radius-lg);
 		padding: 32px;
-		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+		box-shadow: 0 8px 24px var(--c-overlay-strong);
 	}
 
 	.header-top {
@@ -307,23 +307,23 @@
 	}
 
 	.focus-card.impact-high {
-		border-left: 4px solid rgba(255, 99, 132, 0.75);
+		border-left: 4px solid var(--c-link);
 	}
 
 	.focus-card.impact-medium {
-		border-left: 4px solid rgba(255, 177, 66, 0.75);
+		border-left: 4px solid var(--c-text-secondary);
 	}
 
 	.focus-card.impact-low {
-		border-left: 4px solid rgba(104, 196, 255, 0.75);
+		border-left: 4px solid var(--c-text-muted);
 	}
 
 	.focus-card.trend-up {
-		border-left: 4px solid rgba(56, 189, 149, 0.85);
+		border-left: 4px solid var(--c-link);
 	}
 
 	.focus-card.trend-down {
-		border-left: 4px solid rgba(239, 68, 97, 0.85);
+		border-left: 4px solid var(--c-text-muted);
 	}
 
 	.focus-time {
@@ -424,11 +424,11 @@
 	}
 
 	.metric-card.trend-up .metric-change {
-		color: #4ade80;
+		color: var(--c-link);
 	}
 
 	.metric-card.trend-down .metric-change {
-		color: #f87171;
+		color: var(--c-text-muted);
 	}
 
 	.category-grid {
@@ -556,18 +556,18 @@
 	}
 
 	.event-badge.importance-high {
-		background: rgba(94, 36, 62, 0.8);
-		color: rgba(255, 196, 220, 0.9);
+		background: var(--c-bg-700);
+		color: var(--c-text-primary);
 	}
 
 	.event-badge.importance-medium {
-		background: rgba(96, 72, 34, 0.8);
-		color: rgba(255, 230, 190, 0.9);
+		background: var(--c-bg-700);
+		color: var(--c-text-secondary);
 	}
 
 	.event-badge.importance-low {
-		background: rgba(48, 72, 96, 0.8);
-		color: rgba(210, 226, 255, 0.9);
+		background: var(--c-bg-700);
+		color: var(--c-text-muted);
 	}
 
 	.event-forecast {
@@ -656,6 +656,289 @@
 		.community-grid,
 		.category-grid {
 			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+		}
+	}
+
+	/* 추가 반응형 브레이크포인트 */
+	/* Large Desktop: 1440px+ */
+	@media (min-width: 1440px) {
+		.general-dashboard {
+			padding: 40px;
+		}
+		
+		.header-top h1 {
+			font-size: 2.2rem;
+		}
+		
+		.header-top p {
+			font-size: 1.1rem;
+		}
+	}
+
+	/* Desktop: 1200px - 1439px */
+	@media (max-width: 1439px) and (min-width: 1200px) {
+		.general-dashboard {
+			padding: 36px;
+		}
+		
+		.header-top h1 {
+			font-size: 2rem;
+		}
+		
+		.header-top p {
+			font-size: 1rem;
+		}
+	}
+
+	/* Tablet Landscape: 1024px - 1199px */
+	@media (max-width: 1199px) and (min-width: 1024px) {
+		.general-dashboard {
+			padding: 32px;
+		}
+		
+		.header-top h1 {
+			font-size: 1.8rem;
+		}
+		
+		.header-top p {
+			font-size: 0.95rem;
+		}
+		
+		.focus-grid {
+			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+		}
+		
+		.metrics-grid {
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+		}
+		
+		.category-grid {
+			grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		}
+		
+		.community-grid {
+			grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+		}
+	}
+
+	/* Tablet Portrait: 768px - 1023px */
+	@media (max-width: 1023px) and (min-width: 768px) {
+		.general-dashboard {
+			padding: 28px;
+		}
+		
+		.header-top h1 {
+			font-size: 1.6rem;
+		}
+		
+		.header-top p {
+			font-size: 0.9rem;
+		}
+		
+		.focus-grid {
+			grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+			gap: 16px;
+		}
+		
+		.metrics-grid {
+			grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+			gap: 16px;
+		}
+		
+		.category-grid {
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 16px;
+		}
+		
+		.community-grid {
+			grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+			gap: 16px;
+		}
+		
+		.focus-card {
+			padding: 16px;
+		}
+		
+		.metric-card {
+			padding: 16px;
+		}
+		
+		.category-card {
+			padding: 16px;
+		}
+		
+		.community-card {
+			padding: 16px;
+		}
+	}
+
+	/* Mobile Landscape: 640px - 767px */
+	@media (max-width: 767px) and (min-width: 640px) {
+		.general-dashboard {
+			padding: 24px 20px;
+		}
+		
+		.header-top h1 {
+			font-size: 1.4rem;
+		}
+		
+		.header-top p {
+			font-size: 0.85rem;
+		}
+		
+		.focus-grid {
+			grid-template-columns: 1fr;
+			gap: 12px;
+		}
+		
+		.metrics-grid {
+			grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+			gap: 12px;
+		}
+		
+		.category-grid {
+			grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+			gap: 12px;
+		}
+		
+		.community-grid {
+			grid-template-columns: 1fr;
+			gap: 12px;
+		}
+		
+		.focus-card {
+			padding: 14px;
+		}
+		
+		.metric-card {
+			padding: 14px;
+		}
+		
+		.category-card {
+			padding: 14px;
+		}
+		
+		.community-card {
+			padding: 14px;
+		}
+	}
+
+	/* Mobile Portrait: 480px - 639px */
+	@media (max-width: 639px) and (min-width: 480px) {
+		.general-dashboard {
+			padding: 20px 16px;
+		}
+		
+		.header-top h1 {
+			font-size: 1.2rem;
+		}
+		
+		.header-top p {
+			font-size: 0.8rem;
+		}
+		
+		.focus-grid {
+			grid-template-columns: 1fr;
+			gap: 10px;
+		}
+		
+		.metrics-grid {
+			grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+			gap: 10px;
+		}
+		
+		.category-grid {
+			grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+			gap: 10px;
+		}
+		
+		.community-grid {
+			grid-template-columns: 1fr;
+			gap: 10px;
+		}
+		
+		.focus-card {
+			padding: 12px;
+		}
+		
+		.metric-card {
+			padding: 12px;
+		}
+		
+		.category-card {
+			padding: 12px;
+		}
+		
+		.community-card {
+			padding: 12px;
+		}
+	}
+
+	/* Small Mobile: 320px - 479px */
+	@media (max-width: 479px) {
+		.general-dashboard {
+			padding: 16px 12px;
+		}
+		
+		.header-top h1 {
+			font-size: 1.1rem;
+		}
+		
+		.header-top p {
+			font-size: 0.75rem;
+		}
+		
+		.focus-grid {
+			grid-template-columns: 1fr;
+			gap: 8px;
+		}
+		
+		.metrics-grid {
+			grid-template-columns: 1fr;
+			gap: 8px;
+		}
+		
+		.category-grid {
+			grid-template-columns: 1fr;
+			gap: 8px;
+		}
+		
+		.community-grid {
+			grid-template-columns: 1fr;
+			gap: 8px;
+		}
+		
+		.focus-card {
+			padding: 10px;
+		}
+		
+		.metric-card {
+			padding: 10px;
+		}
+		
+		.category-card {
+			padding: 10px;
+		}
+		
+		.community-card {
+			padding: 10px;
+		}
+	}
+
+	/* 터치 디바이스 최적화 */
+	@media (hover: none) and (pointer: coarse) {
+		.focus-card,
+		.metric-card,
+		.category-card,
+		.community-card {
+			min-height: 44px;
+		}
+	}
+
+	/* 고해상도 디스플레이 */
+	@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+		.general-dashboard {
+			font-weight: 500;
 		}
 	}
 </style>

@@ -213,7 +213,7 @@ const publisherList = newsSources.map((source) => ({
 		border: 1px solid var(--c-border-strong);
 		border-radius: var(--radius-lg);
 		padding: 36px;
-		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+		box-shadow: 0 8px 24px var(--c-overlay-strong);
 	}
 
 	.feed-header {
@@ -330,7 +330,7 @@ const publisherList = newsSources.map((source) => ({
 		overflow-y: auto;
 		overflow-x: hidden;
 		scrollbar-width: thin;
-		scrollbar-color: rgba(120, 138, 188, 0.55) transparent;
+		scrollbar-color: var(--c-border-soft) transparent;
 	}
 
 	.publisher-sidebar ul::-webkit-scrollbar {
@@ -338,12 +338,12 @@ const publisherList = newsSources.map((source) => ({
 	}
 
 	.publisher-sidebar ul::-webkit-scrollbar-thumb {
-		background: rgba(120, 138, 188, 0.35);
+		background: var(--c-border-soft);
 		border-radius: 999px;
 	}
 
 	.publisher-sidebar ul::-webkit-scrollbar-thumb:hover {
-		background: rgba(120, 138, 188, 0.5);
+		background: var(--c-border-hover);
 	}
 
 	.publisher-sidebar button {
@@ -380,11 +380,11 @@ const publisherList = newsSources.map((source) => ({
 		height: 34px;
 		border-radius: 50%;
 		background: var(--accent);
-		color: #0b1024;
+		color: var(--c-text-primary);
 		font-weight: 700;
 		font-size: 1.1rem;
 		letter-spacing: 0.02em;
-		box-shadow: 0 0 0 2px rgba(12, 16, 32, 0.8);
+		box-shadow: 0 0 0 2px var(--c-bg-900);
 	}
 
 	.publisher-dot img {
@@ -428,7 +428,7 @@ const publisherList = newsSources.map((source) => ({
 		overflow-y: auto;
 		padding-right: 4px;
 		scrollbar-width: thin;
-		scrollbar-color: rgba(120, 138, 188, 0.65) transparent;
+		scrollbar-color: var(--c-border-soft) transparent;
 		max-height: inherit;
 		height: 100%;
 		min-height: 0;
@@ -439,12 +439,12 @@ const publisherList = newsSources.map((source) => ({
 	}
 
 	.feed-scroll::-webkit-scrollbar-thumb {
-		background: rgba(120, 138, 188, 0.4);
+		background: var(--c-border-soft);
 		border-radius: 999px;
 	}
 
 	.feed-scroll::-webkit-scrollbar-thumb:hover {
-		background: rgba(120, 138, 188, 0.6);
+		background: var(--c-border-hover);
 	}
 
 	.feed-grid {
@@ -470,9 +470,9 @@ const publisherList = newsSources.map((source) => ({
 		border-radius: inherit;
 		border: 1px solid transparent;
 		background: linear-gradient(var(--accent), transparent) border-box;
-		mask: linear-gradient(#000, #000), linear-gradient(#000, #000);
+		mask: linear-gradient(var(--c-text-primary), var(--c-text-primary)), linear-gradient(var(--c-text-primary), var(--c-text-primary));
 		mask-composite: exclude;
-		-webkit-mask: linear-gradient(#000, #000), linear-gradient(#000, #000);
+		-webkit-mask: linear-gradient(var(--c-text-primary), var(--c-text-primary)), linear-gradient(var(--c-text-primary), var(--c-text-primary));
 		-webkit-mask-composite: xor;
 		opacity: 0.3;
 	}
@@ -492,7 +492,7 @@ const publisherList = newsSources.map((source) => ({
 		border-radius: 4px;
 		font-size: 0.78rem;
 		font-weight: 600;
-		color: #0b1024;
+		color: var(--c-text-primary);
 	}
 
 	.badge-img {
@@ -545,31 +545,599 @@ const publisherList = newsSources.map((source) => ({
 		color: var(--c-text-muted);
 	}
 
-	@media (max-width: 640px) {
+	/* 반응형 브레이크포인트 */
+	/* Large Desktop: 1440px+ */
+	@media (min-width: 1440px) {
 		.news-feed {
-			padding: 28px 20px;
-			border-radius: var(--radius-lg);
+			padding: 40px;
+			max-width: 1400px;
+			margin: 0 auto;
 		}
+		
+		.news-feed h2 {
+			font-size: 2rem;
+		}
+		
+		.feed-scroll {
+			max-height: min(600px, 70vh);
+		}
+	}
 
+	/* Desktop: 1200px - 1439px */
+	@media (max-width: 1439px) and (min-width: 1200px) {
+		.news-feed {
+			padding: 36px;
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+		
+		.news-feed h2 {
+			font-size: 1.75rem;
+		}
+		
+		.feed-scroll {
+			max-height: min(550px, 65vh);
+		}
+	}
+
+	/* Tablet Landscape: 1024px - 1199px */
+	@media (max-width: 1199px) and (min-width: 1024px) {
+		.news-feed {
+			padding: 32px;
+			max-width: 1000px;
+			margin: 0 auto;
+		}
+		
+		.news-feed h2 {
+			font-size: 1.5rem;
+		}
+		
+		.feed-scroll {
+			max-height: min(500px, 60vh);
+		}
+	}
+
+	/* Tablet Portrait: 768px - 1023px */
+	@media (max-width: 1023px) and (min-width: 768px) {
+		.news-feed {
+			padding: 28px;
+		}
+		
 		.feed-body {
 			grid-template-columns: 1fr;
+			gap: 24px;
 		}
-
+		
 		.publisher-sidebar {
 			order: 2;
 		}
-
+		
 		.feed-content {
 			order: 1;
 			max-height: none;
 		}
-
+		
 		.feed-scroll {
-			max-height: min(420px, 60vh);
+			max-height: min(450px, 55vh);
 		}
-
+		
 		.feed-grid {
 			grid-template-columns: 1fr;
+		}
+	}
+
+	/* Mobile Landscape: 640px - 767px */
+	@media (max-width: 767px) and (min-width: 640px) {
+		.news-feed {
+			padding: 24px 20px;
+			border-radius: 16px;
+		}
+		
+		.news-feed h2 {
+			font-size: 1.25rem;
+		}
+		
+		.feed-body {
+			grid-template-columns: 1fr;
+			gap: 20px;
+		}
+		
+		.publisher-sidebar {
+			order: 2;
+		}
+		
+		.feed-content {
+			order: 1;
+			max-height: none;
+		}
+		
+		.feed-scroll {
+			max-height: min(400px, 50vh);
+		}
+		
+		.feed-grid {
+			grid-template-columns: 1fr;
+		}
+		
+		.news-card {
+			padding: 16px;
+		}
+		
+		.news-card h3 {
+			font-size: 1rem;
+		}
+		
+		.summary {
+			font-size: 0.85rem;
+		}
+	}
+
+	/* Mobile Portrait: 480px - 639px */
+	@media (max-width: 639px) and (min-width: 480px) {
+		.news-feed {
+			padding: 20px 16px;
+			border-radius: 12px;
+		}
+		
+		.news-feed h2 {
+			font-size: 1.125rem;
+		}
+		
+		.news-feed p {
+			font-size: 0.85rem;
+		}
+		
+		.feed-body {
+			grid-template-columns: 1fr;
+			gap: 16px;
+		}
+		
+		.publisher-sidebar {
+			order: 2;
+		}
+		
+		.feed-content {
+			order: 1;
+			max-height: none;
+		}
+		
+		.feed-scroll {
+			max-height: min(350px, 45vh);
+		}
+		
+		.feed-grid {
+			grid-template-columns: 1fr;
+		}
+		
+		.news-card {
+			padding: 14px;
+		}
+		
+		.news-card h3 {
+			font-size: 0.95rem;
+		}
+		
+		.summary {
+			font-size: 0.8rem;
+		}
+		
+		.body {
+			font-size: 0.75rem;
+		}
+		
+		.card-meta {
+			font-size: 0.75rem;
+		}
+	}
+
+	/* Small Mobile: 320px - 479px */
+	@media (max-width: 479px) {
+		.news-feed {
+			padding: 16px 12px;
+			border-radius: 8px;
+		}
+		
+		.news-feed h2 {
+			font-size: 1rem;
+		}
+		
+		.news-feed p {
+			font-size: 0.8rem;
+		}
+		
+		.feed-body {
+			grid-template-columns: 1fr;
+			gap: 12px;
+		}
+		
+		.publisher-sidebar {
+			order: 2;
+		}
+		
+		.feed-content {
+			order: 1;
+			max-height: none;
+		}
+		
+		.feed-scroll {
+			max-height: min(300px, 40vh);
+		}
+		
+		.feed-grid {
+			grid-template-columns: 1fr;
+		}
+		
+		.news-card {
+			padding: 12px;
+		}
+		
+		.news-card h3 {
+			font-size: 0.9rem;
+		}
+		
+		.summary {
+			font-size: 0.75rem;
+		}
+		
+		.body {
+			font-size: 0.7rem;
+		}
+		
+		.card-meta {
+			font-size: 0.7rem;
+		}
+	}
+
+	/* 터치 디바이스 최적화 */
+	@media (hover: none) and (pointer: coarse) {
+		.news-card {
+			min-height: 44px;
+		}
+	}
+
+	/* 고해상도 디스플레이 */
+	@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+		.news-feed h2 {
+			font-weight: 700;
+		}
+	}
+
+	/* Badge Icon 반응형 */
+	@media (max-width: 1023px) and (min-width: 768px) {
+		.badge-icon {
+			font-size: 0.9rem;
+		}
+	}
+
+	@media (max-width: 767px) and (min-width: 640px) {
+		.badge-icon {
+			font-size: 0.85rem;
+		}
+	}
+
+	@media (max-width: 639px) and (min-width: 480px) {
+		.badge-icon {
+			font-size: 0.8rem;
+		}
+	}
+
+	@media (max-width: 479px) {
+		.badge-icon {
+			font-size: 0.75rem;
+		}
+	}
+
+	/* Empty 상태 반응형 */
+	@media (max-width: 1023px) and (min-width: 768px) {
+		.empty {
+			padding: 40px;
+		}
+	}
+
+	@media (max-width: 767px) and (min-width: 640px) {
+		.empty {
+			padding: 32px;
+		}
+	}
+
+	@media (max-width: 639px) and (min-width: 480px) {
+		.empty {
+			padding: 24px;
+		}
+	}
+
+	@media (max-width: 479px) {
+		.empty {
+			padding: 20px;
+		}
+	}
+
+	/* Feed Copy 반응형 */
+	@media (max-width: 1023px) and (min-width: 768px) {
+		.feed-copy h1 {
+			font-size: 1.6rem;
+		}
+		
+		.feed-copy p {
+			font-size: 0.9rem;
+		}
+	}
+
+	@media (max-width: 767px) and (min-width: 640px) {
+		.feed-copy h1 {
+			font-size: 1.4rem;
+		}
+		
+		.feed-copy p {
+			font-size: 0.85rem;
+		}
+	}
+
+	@media (max-width: 639px) and (min-width: 480px) {
+		.feed-copy h1 {
+			font-size: 1.2rem;
+		}
+		
+		.feed-copy p {
+			font-size: 0.8rem;
+		}
+	}
+
+	@media (max-width: 479px) {
+		.feed-copy h1 {
+			font-size: 1.1rem;
+		}
+		
+		.feed-copy p {
+			font-size: 0.75rem;
+		}
+	}
+
+	/* Meta Chip 반응형 */
+	@media (max-width: 1023px) and (min-width: 768px) {
+		.meta-chip {
+			padding: 5px 10px;
+			font-size: 0.75rem;
+		}
+	}
+
+	@media (max-width: 767px) and (min-width: 640px) {
+		.meta-chip {
+			padding: 4px 8px;
+			font-size: 0.7rem;
+		}
+	}
+
+	@media (max-width: 639px) and (min-width: 480px) {
+		.meta-chip {
+			padding: 3px 6px;
+			font-size: 0.65rem;
+		}
+	}
+
+	@media (max-width: 479px) {
+		.meta-chip {
+			padding: 2px 5px;
+			font-size: 0.6rem;
+		}
+	}
+
+	/* Region Tabs 반응형 */
+	@media (max-width: 1023px) and (min-width: 768px) {
+		.region-tabs {
+			gap: 8px;
+			padding: 5px;
+		}
+		
+		.region-tabs button {
+			padding: 6px 14px;
+			font-size: 0.8rem;
+		}
+	}
+
+	@media (max-width: 767px) and (min-width: 640px) {
+		.region-tabs {
+			gap: 6px;
+			padding: 4px;
+		}
+		
+		.region-tabs button {
+			padding: 5px 12px;
+			font-size: 0.75rem;
+		}
+	}
+
+	@media (max-width: 639px) and (min-width: 480px) {
+		.region-tabs {
+			gap: 4px;
+			padding: 3px;
+		}
+		
+		.region-tabs button {
+			padding: 4px 10px;
+			font-size: 0.7rem;
+		}
+	}
+
+	@media (max-width: 479px) {
+		.region-tabs {
+			gap: 3px;
+			padding: 2px;
+		}
+		
+		.region-tabs button {
+			padding: 3px 8px;
+			font-size: 0.65rem;
+		}
+	}
+
+	/* Feed Disclaimer 반응형 */
+	@media (max-width: 1023px) and (min-width: 768px) {
+		.feed-disclaimer {
+			font-size: 0.8rem;
+		}
+	}
+
+	@media (max-width: 767px) and (min-width: 640px) {
+		.feed-disclaimer {
+			font-size: 0.75rem;
+		}
+	}
+
+	@media (max-width: 639px) and (min-width: 480px) {
+		.feed-disclaimer {
+			font-size: 0.7rem;
+		}
+	}
+
+	@media (max-width: 479px) {
+		.feed-disclaimer {
+			font-size: 0.65rem;
+		}
+	}
+
+	/* Publisher Sidebar 반응형 */
+	@media (max-width: 1023px) and (min-width: 768px) {
+		.publisher-sidebar {
+			min-width: 200px;
+		}
+		
+		.publisher-sidebar ul {
+			gap: 8px;
+		}
+		
+		.publisher-sidebar li {
+			padding: 6px 8px;
+		}
+		
+		.publisher-meta strong {
+			font-size: 0.8rem;
+		}
+		
+		.publisher-meta span {
+			font-size: 0.65rem;
+		}
+	}
+
+	@media (max-width: 767px) and (min-width: 640px) {
+		.publisher-sidebar {
+			min-width: 180px;
+		}
+		
+		.publisher-sidebar ul {
+			gap: 6px;
+		}
+		
+		.publisher-sidebar li {
+			padding: 5px 6px;
+		}
+		
+		.publisher-meta strong {
+			font-size: 0.75rem;
+		}
+		
+		.publisher-meta span {
+			font-size: 0.6rem;
+		}
+	}
+
+	@media (max-width: 639px) and (min-width: 480px) {
+		.publisher-sidebar {
+			min-width: 160px;
+		}
+		
+		.publisher-sidebar ul {
+			gap: 4px;
+		}
+		
+		.publisher-sidebar li {
+			padding: 4px 5px;
+		}
+		
+		.publisher-meta strong {
+			font-size: 0.7rem;
+		}
+		
+		.publisher-meta span {
+			font-size: 0.55rem;
+		}
+	}
+
+	@media (max-width: 479px) {
+		.publisher-sidebar {
+			min-width: 140px;
+		}
+		
+		.publisher-sidebar ul {
+			gap: 3px;
+		}
+		
+		.publisher-sidebar li {
+			padding: 3px 4px;
+		}
+		
+		.publisher-meta strong {
+			font-size: 0.65rem;
+		}
+		
+		.publisher-meta span {
+			font-size: 0.5rem;
+		}
+	}
+
+	/* Badge 반응형 */
+	@media (max-width: 1023px) and (min-width: 768px) {
+		.badge {
+			padding: 3px 10px;
+			font-size: 0.75rem;
+		}
+		
+		.badge-img {
+			width: 16px;
+			height: 16px;
+		}
+	}
+
+	@media (max-width: 767px) and (min-width: 640px) {
+		.badge {
+			padding: 2px 8px;
+			font-size: 0.7rem;
+		}
+		
+		.badge-img {
+			width: 14px;
+			height: 14px;
+		}
+	}
+
+	@media (max-width: 639px) and (min-width: 480px) {
+		.badge {
+			padding: 2px 6px;
+			font-size: 0.65rem;
+		}
+		
+		.badge-img {
+			width: 12px;
+			height: 12px;
+		}
+	}
+
+	@media (max-width: 479px) {
+		.badge {
+			padding: 1px 5px;
+			font-size: 0.6rem;
+		}
+		
+		.badge-img {
+			width: 10px;
+			height: 10px;
+		}
+	}
+
+	/* 다크 모드 최적화 */
+	@media (prefers-color-scheme: dark) {
+		.news-feed {
+			background: var(--c-bg-800);
 		}
 	}
 </style>

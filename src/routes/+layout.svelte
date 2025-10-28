@@ -96,4 +96,77 @@
 		-webkit-font-feature-settings: 'liga';
 		font-feature-settings: 'liga';
 	}
+
+	/* 반응형 브레이크포인트 */
+	/* Large Desktop: 1440px+ */
+	@media (min-width: 1440px) {
+		:global(.material-icons-round) {
+			font-size: 26px;
+		}
+	}
+
+	/* Desktop: 1200px - 1439px */
+	@media (max-width: 1439px) and (min-width: 1200px) {
+		:global(.material-icons-round) {
+			font-size: 24px;
+		}
+	}
+
+	/* Tablet Landscape: 1024px - 1199px */
+	@media (max-width: 1199px) and (min-width: 1024px) {
+		:global(.material-icons-round) {
+			font-size: 22px;
+		}
+	}
+
+	/* Tablet Portrait: 768px - 1023px */
+	@media (max-width: 1023px) and (min-width: 768px) {
+		:global(.material-icons-round) {
+			font-size: 20px;
+		}
+	}
+
+	/* Mobile Landscape: 640px - 767px */
+	@media (max-width: 767px) and (min-width: 640px) {
+		:global(.material-icons-round) {
+			font-size: 18px;
+		}
+	}
+
+	/* Mobile Portrait: 480px - 639px */
+	@media (max-width: 639px) and (min-width: 480px) {
+		:global(.material-icons-round) {
+			font-size: 16px;
+		}
+	}
+
+	/* Small Mobile: 320px - 479px */
+	@media (max-width: 479px) {
+		:global(.material-icons-round) {
+			font-size: 14px;
+		}
+	}
+
+	/* 터치 디바이스 최적화 */
+	@media (hover: none) and (pointer: coarse) {
+		:global(.material-icons-round) {
+			min-width: 44px;
+			min-height: 44px;
+		}
+	}
+
+	/* 고해상도 디스플레이 */
+	@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+		:global(.material-icons-round) {
+			font-weight: 500;
+		}
+	}
+
+	/* 다크 모드 최적화 */
+	@media (prefers-color-scheme: dark) {
+		:global(html, body) {
+			background: var(--c-bg-900);
+			color: var(--c-text-primary);
+		}
+	}
 </style>
