@@ -59,9 +59,9 @@ let initialZoom: number | null = null;
 				change,
 				upperLabel: {
 					backgroundColor: getColor(change),
-					color: 'var(--c-text-primary)',
+					color: 'white',
 					textShadowBlur: 8,
-					textShadowColor: 'var(--c-overlay-strong)',
+					textShadowColor: 'rgba(0, 0, 0, 0.5)',
 					padding: [0, 6, 0, 6],
 					fontSize: 9,
 					fontWeight: 500
@@ -412,9 +412,9 @@ const updateChart = () => {
 				formatter: labelFormatter,
 				fontSize: 12,
 				fontWeight: 600,
-				color: 'var(--c-text-primary)',
+				color: 'white',
 				textShadowBlur: 8,
-				textShadowColor: 'var(--c-overlay-strong)',
+				textShadowColor: 'rgba(0, 0, 0, 0.5)',
 				minFontSize: 8,
 				maxFontSize: 32,
 				overflow: 'truncate'
@@ -426,11 +426,11 @@ const updateChart = () => {
 					const name = params?.data?.name;
 					return name && name !== 'undefined' ? name : '';
 				},
-				color: 'var(--c-text-primary)',
+				color: 'white',
 				fontSize: 9,
 				fontWeight: 500,
 				textShadowBlur: 8,
-				textShadowColor: 'var(--c-overlay-strong)',
+				textShadowColor: 'rgba(0, 0, 0, 0.5)',
 				padding: [0, 6, 0, 6],
 				backgroundColor: 'var(--c-bg-700)'
 			},
@@ -476,7 +476,7 @@ const updateChart = () => {
 					padding: 12,
 					backgroundColor: 'var(--c-bg-800)',
 					textStyle: {
-						color: 'var(--c-text-primary)',
+						color: 'white',
 						fontSize: 12
 					}
 				},
@@ -598,6 +598,8 @@ const updateChart = () => {
 		dominant-baseline: middle !important;
 		text-align: center !important;
 		transform: translate(-50%, -50%) !important;
+		fill: white !important;
+		color: white !important;
 	}
 
 	.treemap :global(.echarts .ec-label) {
@@ -605,6 +607,8 @@ const updateChart = () => {
 		dominant-baseline: middle !important;
 		text-align: center !important;
 		transform: translate(-50%, -50%) !important;
+		fill: white !important;
+		color: white !important;
 	}
 
 	.treemap :global(.echarts .ec-treemap-label) {
@@ -612,17 +616,23 @@ const updateChart = () => {
 		dominant-baseline: middle !important;
 		text-align: center !important;
 		transform: translate(-50%, -50%) !important;
+		fill: white !important;
+		color: white !important;
 	}
 
 	.treemap :global(.echarts tspan) {
 		text-anchor: middle !important;
 		dominant-baseline: middle !important;
+		fill: white !important;
+		color: white !important;
 	}
 
 	.treemap :global(svg text) {
 		text-anchor: middle !important;
 		dominant-baseline: middle !important;
 		transform: translate(-50%, -50%) !important;
+		fill: white !important;
+		color: white !important;
 	}
 
 	/* 반응형 브레이크포인트 */
