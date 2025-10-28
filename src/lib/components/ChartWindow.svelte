@@ -157,13 +157,25 @@ const loadTradingViewScript = () => {
 		loadError = null;
 
 		try {
+			// 기존 위젯 안전하게 제거
 			if (widget?.remove) {
-				widget.remove();
+				try {
+					widget.remove();
+					console.log('Previous TradingView widget removed');
+				} catch (error) {
+					console.warn('Error removing previous widget:', error);
+				}
 				widget = null;
 			}
 
+			// 컨테이너 정리
 			if (containerElement) {
-				containerElement.innerHTML = '';
+				try {
+					containerElement.innerHTML = '';
+					console.log('Container cleared for new widget');
+				} catch (error) {
+					console.warn('Error clearing container:', error);
+				}
 			}
 
 			await loadTradingViewScript();
@@ -217,24 +229,65 @@ const loadTradingViewScript = () => {
 	});
 
 	onDestroy(() => {
-		if (browser) window.removeEventListener('resize', updateViewport);
-		if (widget?.remove) widget.remove();
+		console.log('ChartWindow onDestroy called for instrument:', instrument?.name);
+		
+		if (browser) {
+			window.removeEventListener('resize', updateViewport);
+		}
+		
+		// TradingView 위젯 안전하게 정리
+		if (widget?.remove) {
+			try {
+				widget.remove();
+				console.log('TradingView widget removed successfully');
+			} catch (error) {
+				console.warn('Error removing TradingView widget:', error);
+			}
+		}
+		
+		// 컨테이너 정리
+		if (containerElement) {
+			try {
+				containerElement.innerHTML = '';
+				console.log('Container element cleared');
+			} catch (error) {
+				console.warn('Error clearing container element:', error);
+			}
+		}
+		
+		// 상태 초기화
+		widget = null;
+		widgetSymbolLoaded = null;
+		loadingWidget = false;
+		loadError = null;
 	});
 
 	$: {
-		const clamped = clampWithinViewport(position.x, position.y);
-		if (clamped.x !== position.x || clamped.y !== position.y) {
-			position = clamped;
-			dispatch('move', clamped);
+		try {
+			const clamped = clampWithinViewport(position.x, position.y);
+			if (clamped.x !== position.x || clamped.y !== position.y) {
+				position = clamped;
+				dispatch('move', clamped);
+			}
+		} catch (error) {
+			console.warn('Error in position clamping:', error);
 		}
 	}
 
 	$: if (browser && containerElement && !loadingWidget) {
-		void ensureWidget();
+		try {
+			void ensureWidget();
+		} catch (error) {
+			console.warn('Error in ensureWidget reactive statement:', error);
+		}
 	}
 
 	$: if (widget?.resize && !loadingWidget) {
-		widget.resize(size.width, size.height);
+		try {
+			widget.resize(size.width, size.height);
+		} catch (error) {
+			console.warn('Error resizing widget:', error);
+		}
 	}
 
 </script>

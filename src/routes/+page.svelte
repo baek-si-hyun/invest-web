@@ -200,35 +200,70 @@ $: if (typeof document !== 'undefined') {
 		return { x: baseX, y: baseY };
 	};
 	
-const bringToFront = (key: string) => {
-	zCounter += 1;
-	windows = windows.map((window) => (window.key === key ? { ...window, z: zCounter } : window));
-};
+	const bringToFront = (key: string) => {
+		console.log('Bringing window to front:', key);
+		zCounter += 1;
+		
+		// 안전한 배열 업데이트
+		const newWindows = windows.map((window) => 
+			window.key === key ? { ...window, z: zCounter } : window
+		);
+		windows = newWindows;
+	};
 
 const updateWindowState = (key: string, updater: (window: WindowState) => WindowState) => {
-	windows = windows.map((window) => (window.key === key ? updater(window) : window));
+	console.log('Updating window state:', key);
+	
+	// 안전한 배열 업데이트
+	const newWindows = windows.map((window) => 
+		window.key === key ? updater(window) : window
+	);
+	windows = newWindows;
 };
 
 const handleMove = (key: string, detail: { x: number; y: number }) => {
-	windows = windows.map((window) =>
+	console.log('Moving window:', key, 'to position:', detail);
+	
+	// 안전한 배열 업데이트
+	const newWindows = windows.map((window) =>
 		window.key === key ? { ...window, position: { x: detail.x, y: detail.y } } : window
 	);
+	windows = newWindows;
 };
 
 	const handleResize = (key: string, detail: { width: number; height: number }) => {
-		windows = windows.map((window) =>
+		console.log('Resizing window:', key, 'to size:', detail);
+		
+		// 안전한 배열 업데이트
+		const newWindows = windows.map((window) =>
 			window.key === key ? { ...window, size: { width: detail.width, height: detail.height } } : window
 		);
+		windows = newWindows;
 	};
 
 	const closeWindow = (key: string) => {
-		windows = windows.filter((window) => window.key !== key);
+		console.log('Closing window:', key, 'Current windows count:', windows.length);
+		
+		// 안전한 배열 업데이트를 위해 새로운 배열 생성
+		const newWindows = windows.filter((window) => window.key !== key);
+		
+		console.log('New windows count after close:', newWindows.length);
+		
+		// 배열이 완전히 비어있을 때도 안전하게 처리
+		if (newWindows.length === 0) {
+			console.log('All windows closed, resetting to empty array');
+			windows = [];
+		} else {
+			windows = newWindows;
+		}
 	};
 
 	const openChart = (instrumentId: string) => {
+		console.log('Opening chart for instrument:', instrumentId);
 		const key = `chart:${instrumentId}`;
 		const existing = windows.find((window) => window.key === key);
 		if (existing) {
+			console.log('Chart already exists, bringing to front');
 			bringToFront(key);
 			return;
 		}
@@ -243,6 +278,8 @@ const handleMove = (key: string, detail: { x: number; y: number }) => {
 			z: ++zCounter
 		};
 
+		console.log('Adding new chart window:', nextWindow);
+		// 안전한 배열 업데이트
 		windows = [...windows, nextWindow];
 	};
 
@@ -816,6 +853,11 @@ const setCommunityFilter = (key: string, boardSlug: string | null) => {
 			{#if windows.length === 0}
 				<div class="empty-state">
 					<p>상단 메뉴에서 차트, 경제 이벤트, SNS, 뉴스 등을 선택해 창을 띄워보세요.</p>
+				</div>
+			{:else}
+				<!-- 창이 있을 때의 상태 표시 (디버깅용) -->
+				<div class="debug-info" style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 8px; border-radius: 4px; font-size: 12px; z-index: 9999;">
+					창 개수: {windows.length}
 				</div>
 			{/if}
 		</section>
