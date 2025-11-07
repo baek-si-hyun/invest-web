@@ -1,33 +1,30 @@
 {
-  "name": "invest-web",
+  "name": "invest-hub-vue",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
-    "preview": "vite preview",
-    "prepare": "svelte-kit sync || echo ''",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "build:gh-pages": "cross-env DEPLOY_TARGET=gh-pages GH_PAGES_BASE=/invest-web vite build",
-    "deploy": "npm run build:gh-pages && gh-pages -d build --dotfiles"
-  },
-  "devDependencies": {
-    "@sveltejs/adapter-static": "^3.0.10",
-    "@sveltejs/kit": "^2.43.2",
-    "@sveltejs/vite-plugin-svelte": "^6.2.0",
-    "cross-env": "^10.1.0",
-    "gh-pages": "^6.3.0",
-    "svelte": "^5.39.5",
-    "svelte-check": "^4.3.2",
-    "typescript": "^5.9.2",
-    "vite": "^7.1.7"
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@fullcalendar/core": "6.1.19",
     "@fullcalendar/daygrid": "6.1.19",
     "@fullcalendar/interaction": "6.1.19",
-    "echarts": "^6.0.0"
+    "echarts": "^6.0.0",
+    "vue": "^3.5.22",
+    "vue-router": "^4.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.6.0",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/tsconfig": "^0.8.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.7",
+    "vue-tsc": "^3.1.0"
   }
 }
