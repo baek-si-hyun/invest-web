@@ -1,4 +1,3 @@
-import { computed } from 'vue'
 import type { SNSWindowState, NewsWindowState, CommunityWindowState } from '@/types'
 import type { SocialPlatform } from '@/data/social'
 import type { NewsSource } from '@/data/news'

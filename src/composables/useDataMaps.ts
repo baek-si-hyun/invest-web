@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 import { instruments } from '@/data/instruments'
-import { socialPlatforms, type SocialPlatform } from '@/data/social'
-import { newsSources, type NewsSource } from '@/data/news'
+import { socialPlatforms } from '@/data/social'
+import { newsSources } from '@/data/news'
 import { communityBoards } from '@/data/community'
 import { NEWS_REGION_ACCENTS, DEFAULT_NEWS_ACCENT } from '@/constants'
 

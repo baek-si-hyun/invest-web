@@ -10,17 +10,11 @@ import GeneralNewsFeed from '@/components/GeneralNewsFeed.vue'
 import GeneralCommunity from '@/components/home/GeneralCommunity.vue'
 import GeneralPlaceholder from '@/components/home/GeneralPlaceholder.vue'
 import { instruments } from '@/data/instruments'
-import {
-  economicEvents as calendarEconomicEvents,
-  type EconomicEvent
-} from '@/data/economicEvents'
+import { economicEvents as calendarEconomicEvents } from '@/data/economicEvents'
 import { socialPlatforms, type SocialPlatform } from '@/data/social'
 import { newsSources } from '@/data/news'
-import { communityBoards, featuredCommunityPosts } from '@/data/community'
+import { featuredCommunityPosts } from '@/data/community'
 import type {
-  Section,
-  Mode,
-  WindowState,
   SNSWindowState,
   NewsWindowState,
   CommunityWindowState
@@ -51,7 +45,6 @@ const {
   allPlatformIds,
   newsSourceMap,
   allNewsSourceIds,
-  newsPublishers,
   communityBoardMap,
   communityBoardsByActivity
 } = useDataMaps()
@@ -70,8 +63,6 @@ const {
   handleLogoClick,
   cancelHoverHide,
   scheduleHoverHide,
-  showMenuModal,
-  handleMenuClick,
   handleNavClick,
   handleNavPointerEnter
 } = useNavigation()
@@ -103,7 +94,6 @@ onBeforeUnmount(() => {
 const {
   windows,
   bringToFront,
-  updateWindowState,
   handleMove,
   handleResize,
   closeWindow,
@@ -111,7 +101,6 @@ const {
   openEventsWindow,
   openSNSWindow,
   openNewsWindow,
-  setNewsWindowSource,
   openCommunityWindow,
   openEventDetail,
   closeEventDetail,
@@ -156,13 +145,6 @@ const openNewsFromMenu = (sourceId: string) => {
   }
 }
 
-const setNewsWindowSourceWrapper = (key: string, sourceId: string | null) => {
-  setNewsWindowSource(key, sourceId, allNewsSourceIds.value)
-}
-
-// Alias for template usage
-const setNewsWindowSourceForTemplate = setNewsWindowSourceWrapper
-
 const isInstrumentActive = (instrumentId: string) =>
   windows.value.some((window) => window.type === 'chart' && window.instrumentId === instrumentId)
 
@@ -174,7 +156,7 @@ const isSNSActive = (platformId: PlatformId | 'all') => {
     | undefined
   if (!window) return false
   if (platformId === 'all') {
-    return window.platforms.length === allPlatformIds.length
+    return window.platforms.length === allPlatformIds.value.length
   }
   return window.platforms.includes(platformId)
 }
@@ -219,13 +201,6 @@ const openCommunityFromMenu = (boardSlug: string | 'all') => {
   }
 }
 
-type SNSListItem = SocialPlatform['posts'][number] & {
-  platformId: PlatformId
-  platformLabel: string
-}
-
-// Window items helpers are now in useWindowItems composable
-
 
 const navOffsetStyle = computed<CSSProperties>(() => ({
   '--nav-offset': `${navHeight.value}px`
@@ -240,7 +215,7 @@ const generalPaddingStyle = computed<CSSProperties>(() => ({
 }))
 
 const getEconomicEventDetail = (index: number | null) =>
-  index === null ? null : economicEventsList[index] ?? null
+  index === null ? null : economicEventsList.value[index] ?? null
 
 // Window meta helpers are now in useWindowItems composable
 const getSNSWindowMetaWrapper = (window: SNSWindowState) =>

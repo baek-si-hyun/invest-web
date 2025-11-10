@@ -83,8 +83,8 @@ const withBase = (path: string) => {
           <h3>오늘의 중요 이벤트</h3>
           <ul class="focus-list">
             <li
-              v-for="event in todayEvents"
-              :key="event.id"
+              v-for="(event, index) in todayEvents"
+              :key="`event-${index}`"
               :class="['focus-card', `impact-${event.impact}`]"
             >
               <span class="focus-time">{{ event.time }}</span>
@@ -96,8 +96,8 @@ const withBase = (path: string) => {
           <h3>주요 시장 이슈</h3>
           <ul class="focus-list">
             <li
-              v-for="issue in todayIssues"
-              :key="issue.id"
+              v-for="(issue, index) in todayIssues"
+              :key="`issue-${index}`"
               :class="['focus-card', `trend-${issue.trend}`]"
             >
               <span class="focus-chip">{{ issue.category }}</span>
@@ -117,7 +117,7 @@ const withBase = (path: string) => {
       <div class="metrics-grid">
         <article
           v-for="item in marketOverviewCards"
-          :key="item.id"
+          :key="item.symbol"
           :class="['metric-card', `trend-${item.trend}`]"
         >
           <header>

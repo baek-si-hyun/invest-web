@@ -1,0 +1,6 @@
+{
+  "*.{ts,vue}": [
+    "bash -c 'npm run lint'"
+  ]
+}
+

@@ -62,7 +62,7 @@ const props = withDefaults(
 )
 
 const calendarEl = ref<HTMLDivElement | null>(null)
-let calendar: Calendar | null = null
+let calendar: InstanceType<typeof Calendar> | null = null
 
 const activeFilter = ref<FilterType>('all')
 const selectedDate = ref<string | null>(null)
@@ -151,10 +151,10 @@ onMounted(() => {
     height: 'auto',
     events: transformedEvents.value,
     initialDate: props.initialDate,
-    dateClick: (info) => {
+    dateClick: (info: { dateStr: string }) => {
       selectedDate.value = info.dateStr
     },
-    eventClick: (info) => {
+    eventClick: (info: { event: { url?: string }; jsEvent?: { preventDefault?: () => void } }) => {
       if (info.event.url) {
         return
       }

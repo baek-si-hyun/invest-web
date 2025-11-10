@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import type { Instrument } from '@/data/instruments'
 
 const MIN_WIDTH = 220
@@ -103,13 +103,15 @@ const handleTouchStart = (event: TouchEvent) => {
   event.preventDefault()
   if (event.touches.length === 1) {
     const touch = event.touches[0]
-    const pointerEvent = new PointerEvent('pointerdown', {
-      clientX: touch.clientX,
-      clientY: touch.clientY,
-      pointerId: touch.identifier,
-      pointerType: 'touch'
-    })
-    handleDragStart(pointerEvent)
+    if (touch) {
+      const pointerEvent = new PointerEvent('pointerdown', {
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        pointerId: touch.identifier,
+        pointerType: 'touch'
+      })
+      handleDragStart(pointerEvent)
+    }
   }
 }
 
@@ -117,13 +119,15 @@ const handleTouchMove = (event: TouchEvent) => {
   event.preventDefault()
   if (event.touches.length === 1 && dragging.value) {
     const touch = event.touches[0]
-    const pointerEvent = new PointerEvent('pointermove', {
-      clientX: touch.clientX,
-      clientY: touch.clientY,
-      pointerId: touch.identifier,
-      pointerType: 'touch'
-    })
-    handleDragMove(pointerEvent)
+    if (touch) {
+      const pointerEvent = new PointerEvent('pointermove', {
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        pointerId: touch.identifier,
+        pointerType: 'touch'
+      })
+      handleDragMove(pointerEvent)
+    }
   }
 }
 
